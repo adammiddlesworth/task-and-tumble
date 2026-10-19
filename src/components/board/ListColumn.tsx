@@ -79,7 +79,7 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
       <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         <div className="flex min-h-2 flex-col gap-2 overflow-y-auto px-2 py-2">
           {cards.map((c) => (
-            <SortableCard key={c.id} card={c} labels={labelsFor(c.id)} checklist={data.checklistStats[c.id]} goalCount={goalCounts[c.id]} />
+            <SortableCard key={c.id} card={c} labels={labelsFor(c.id)} checklist={data.checklistStats[c.id]} goalCount={goalCounts[c.id]} coverUrl={c.cover_url ? data.coverUrls[c.cover_url] : undefined} />
           ))}
         </div>
       </SortableContext>

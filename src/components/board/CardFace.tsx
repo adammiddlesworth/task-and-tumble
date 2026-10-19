@@ -10,11 +10,15 @@ type Props = {
   labels: Label[];
   checklist?: { done: number; total: number } | undefined;
   goalCount?: number | undefined;
+  coverUrl?: string | undefined;
 };
 
-export function CardFaceView({ card, labels, checklist, goalCount }: Props) {
+export function CardFaceView({ card, labels, checklist, goalCount, coverUrl }: Props) {
   return (
     <div className="space-y-1.5">
+      {coverUrl && (
+        <img src={coverUrl} alt="" draggable={false} className="-mx-3 -mt-2 mb-2 block h-32 w-[calc(100%+1.5rem)] max-w-none rounded-t-lg object-cover" />
+      )}
       {labels.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {labels.map((l) => (
@@ -60,7 +64,7 @@ export function SortableCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={() => navigate({ to: "/board/$boardId/card/$cardId", params: { boardId: props.card.board_id, cardId: props.card.id } })}
-      className={`cursor-pointer rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
+      className={`cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
     >
       <CardFaceView {...props} />
     </div>

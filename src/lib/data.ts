@@ -34,7 +34,20 @@ export type BoardData = {
   labels: Label[];
   cardLabels: { card_id: string; label_id: string }[];
   checklistStats: Record<string, { done: number; total: number }>;
+  coverUrls: Record<string, string>;
 };
+
+export const COVER_BUCKET = "card-covers";
+
+/** Sign many cover paths at once; returns path -> url. */
+export async function signCovers(paths: string[]): Promise<Record<string, string>> {
+  const unique = [...new Set(paths.filter(Boolean))];
+  if (!unique.length) return {};
+  const { data } = await supabase.storage.from(COVER_BUCKET).createSignedUrls(unique, 60 * 60 * 24);
+  const out: Record<string, string> = {};
+  for (const d of data ?? []) if (d.path && d.signedUrl) out[d.path] = d.signedUrl;
+  return out;
+}
 
 export const boardQuery = (boardId: string) =>
   queryOptions({
@@ -56,10 +69,13 @@ export const boardQuery = (boardId: string) =>
           if (i.is_done) s.done++;
         }
       }
+      const cardRows = check(cards);
+      const coverUrls = await signCovers(cardRows.map((c) => c.cover_url ?? ""));
       return {
+        coverUrls,
         board: check(board),
         lists: check(lists),
-        cards: check(cards),
+        cards: cardRows,
         labels: check(labels),
         cardLabels: (check(cl) ?? []).map((r) => ({ card_id: r.card_id, label_id: r.label_id })),
         checklistStats,
@@ -78,8 +94,11 @@ export const cardQuery = (cardId: string) =>
         supabase.from("card_labels").select("label_id").eq("card_id", cardId),
         supabase.from("card_activity").select("*").eq("card_id", cardId).order("created_at", { ascending: false }).limit(20),
       ]);
+      const c = check(card);
+      const covers = c.cover_url ? await signCovers([c.cover_url]) : {};
       return {
-        card: check(card),
+        coverSignedUrl: c.cover_url ? covers[c.cover_url] ?? null : null,
+        card: c,
         youtube: check(yt),
         checklists: check(checklists).map((c) => ({
           ...c,

@@ -132,6 +132,7 @@ export type Database = {
           claude_last_run_at: string | null
           claude_output: string | null
           claude_status: string
+          cover_url: string | null
           created_at: string
           description: string | null
           due_date: string | null
@@ -151,6 +152,7 @@ export type Database = {
           claude_last_run_at?: string | null
           claude_output?: string | null
           claude_status?: string
+          cover_url?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null
@@ -170,6 +172,7 @@ export type Database = {
           claude_last_run_at?: string | null
           claude_output?: string | null
           claude_status?: string
+          cover_url?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null

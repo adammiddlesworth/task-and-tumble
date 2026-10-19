@@ -17,6 +17,7 @@ import { AiAssist } from "@/components/card/AiAssist";
 import { YoutubeFields } from "@/components/card/YoutubeFields";
 import { Checklists } from "@/components/card/Checklists";
 import { LabelPicker } from "@/components/card/LabelPicker";
+import { CoverBanner, CoverButton } from "@/components/card/CoverImage";
 
 export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardId")({
   head: () => ({
@@ -65,6 +66,7 @@ function CardModal() {
   return (
     <Dialog open onOpenChange={(o) => !o && close()}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto p-0">
+        {data.card.cover_url && <CoverBanner card={card} url={data.coverSignedUrl} />}
         <div className="space-y-5 p-6">
           <div>
             <DialogTitle className="sr-only">{card.title}</DialogTitle>
@@ -86,6 +88,7 @@ function CardModal() {
           </div>
 
           <div className="ml-8 flex flex-wrap items-center gap-2">
+            <CoverButton card={card} />
             <LabelPicker cardId={card.id} boardId={boardId} labels={board.labels} selected={data.labelIds} />
             <Input
               type="datetime-local"
