@@ -10,33 +10,132 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedBoardsRouteImport } from './routes/_authenticated/boards'
+import { Route as AuthenticatedDueSoonRouteImport } from './routes/_authenticated/due-soon'
+import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedBoardBoardIdRouteImport } from './routes/_authenticated/board.$boardId'
+import { Route as AuthenticatedBoardBoardIdCardCardIdRouteImport } from './routes/_authenticated/board.$boardId.card.$cardId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedBoardsRoute = AuthenticatedBoardsRouteImport.update({
+  id: '/boards',
+  path: '/boards',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDueSoonRoute = AuthenticatedDueSoonRouteImport.update({
+  id: '/due-soon',
+  path: '/due-soon',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBoardBoardIdRoute =
+  AuthenticatedBoardBoardIdRouteImport.update({
+    id: '/board/$boardId',
+    path: '/board/$boardId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBoardBoardIdCardCardIdRoute =
+  AuthenticatedBoardBoardIdCardCardIdRouteImport.update({
+    id: '/card/$cardId',
+    path: '/card/$cardId',
+    getParentRoute: () => AuthenticatedBoardBoardIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/boards': typeof AuthenticatedBoardsRoute
+  '/due-soon': typeof AuthenticatedDueSoonRoute
+  '/review': typeof AuthenticatedReviewRoute
+  '/search': typeof AuthenticatedSearchRoute
+  '/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
+  '/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/boards': typeof AuthenticatedBoardsRoute
+  '/due-soon': typeof AuthenticatedDueSoonRoute
+  '/review': typeof AuthenticatedReviewRoute
+  '/search': typeof AuthenticatedSearchRoute
+  '/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
+  '/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/boards': typeof AuthenticatedBoardsRoute
+  '/_authenticated/due-soon': typeof AuthenticatedDueSoonRoute
+  '/_authenticated/review': typeof AuthenticatedReviewRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
+  '/_authenticated/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
+  '/_authenticated/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/boards'
+    | '/due-soon'
+    | '/review'
+    | '/search'
+    | '/board/$boardId'
+    | '/board/$boardId/card/$cardId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/boards'
+    | '/due-soon'
+    | '/review'
+    | '/search'
+    | '/board/$boardId'
+    | '/board/$boardId/card/$cardId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/boards'
+    | '/_authenticated/due-soon'
+    | '/_authenticated/review'
+    | '/_authenticated/search'
+    | '/_authenticated/board/$boardId'
+    | '/_authenticated/board/$boardId/card/$cardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +147,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/boards': {
+      id: '/_authenticated/boards'
+      path: '/boards'
+      fullPath: '/boards'
+      preLoaderRoute: typeof AuthenticatedBoardsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/due-soon': {
+      id: '/_authenticated/due-soon'
+      path: '/due-soon'
+      fullPath: '/due-soon'
+      preLoaderRoute: typeof AuthenticatedDueSoonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/review': {
+      id: '/_authenticated/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AuthenticatedReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/board/$boardId': {
+      id: '/_authenticated/board/$boardId'
+      path: '/board/$boardId'
+      fullPath: '/board/$boardId'
+      preLoaderRoute: typeof AuthenticatedBoardBoardIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/board/$boardId/card/$cardId': {
+      id: '/_authenticated/board/$boardId/card/$cardId'
+      path: '/card/$cardId'
+      fullPath: '/board/$boardId/card/$cardId'
+      preLoaderRoute: typeof AuthenticatedBoardBoardIdCardCardIdRouteImport
+      parentRoute: typeof AuthenticatedBoardBoardIdRoute
+    }
   }
 }
 
+interface AuthenticatedBoardBoardIdRouteChildren {
+  AuthenticatedBoardBoardIdCardCardIdRoute: typeof AuthenticatedBoardBoardIdCardCardIdRoute
+}
+
+const AuthenticatedBoardBoardIdRouteChildren: AuthenticatedBoardBoardIdRouteChildren =
+  {
+    AuthenticatedBoardBoardIdCardCardIdRoute:
+      AuthenticatedBoardBoardIdCardCardIdRoute,
+  }
+
+const AuthenticatedBoardBoardIdRouteWithChildren =
+  AuthenticatedBoardBoardIdRoute._addFileChildren(
+    AuthenticatedBoardBoardIdRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBoardsRoute: typeof AuthenticatedBoardsRoute
+  AuthenticatedDueSoonRoute: typeof AuthenticatedDueSoonRoute
+  AuthenticatedReviewRoute: typeof AuthenticatedReviewRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
+  AuthenticatedBoardBoardIdRoute: typeof AuthenticatedBoardBoardIdRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBoardsRoute: AuthenticatedBoardsRoute,
+  AuthenticatedDueSoonRoute: AuthenticatedDueSoonRoute,
+  AuthenticatedReviewRoute: AuthenticatedReviewRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
+  AuthenticatedBoardBoardIdRoute: AuthenticatedBoardBoardIdRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
