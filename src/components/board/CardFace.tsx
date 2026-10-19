@@ -8,9 +8,8 @@ import type { Card, Label } from "@/lib/data";
 type Props = {
   card: Card;
   labels: Label[];
-  checklist?: { done: number; total: number };
-  goalCount?: number;
-  overlay?: boolean;
+  checklist?: { done: number; total: number } | undefined;
+  goalCount?: number | undefined;
 };
 
 export function CardFaceView({ card, labels, checklist, goalCount }: Props) {

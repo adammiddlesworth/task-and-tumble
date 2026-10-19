@@ -13,9 +13,9 @@ export const BOARD_COLORS = ["forest", "crimson", "teal", "ocean", "amber", "plu
 export const LABEL_COLORS = ["green", "yellow", "orange", "red", "purple", "blue"] as const;
 export const DAY_LISTS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekend"];
 
-function check<T>(res: { data: T; error: { message: string } | null }): T {
+function check<T>(res: { data: T; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data;
+  return res.data as NonNullable<T>;
 }
 
 export const boardsQuery = () =>
@@ -148,7 +148,7 @@ export async function updateCard(qc: QueryClient, card: Pick<Card, "id" | "board
   qc.setQueryData<BoardData>(["board", card.board_id], (d) =>
     d ? { ...d, cards: d.cards.map((c) => (c.id === card.id ? { ...c, ...patch } as Card : c)) } : d,
   );
-  qc.setQueryData(["card", card.id], (d: Awaited<ReturnType<ReturnType<typeof cardQuery>["queryFn"]>> | undefined) =>
+  qc.setQueryData(["card", card.id], (d: { card: Card } | undefined) =>
     d ? { ...d, card: { ...d.card, ...patch } as Card } : d,
   );
   const { error } = await supabase.from("cards").update(patch).eq("id", card.id);
