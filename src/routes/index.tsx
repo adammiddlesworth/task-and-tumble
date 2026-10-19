@@ -1,24 +1,64 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Bot, LayoutGrid, CalendarClock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Command Center — Personal kanban with Claude" },
+      { name: "description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
+      { property: "og:title", content: "Command Center — Personal kanban with Claude" },
+      { property: "og:description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/boards", replace: true });
+    });
+  }, [navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <main className="min-h-screen bg-nav text-nav-foreground">
+      <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 py-16">
+        <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-nav-foreground/15 px-3 py-1 text-xs tracking-wide text-nav-foreground/70">
+          <span className="h-2 w-2 rounded-full bg-primary" /> Command Center
+        </div>
+        <h1 className="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl">
+          Your week, your channels, <span className="text-primary">one board.</span>
+        </h1>
+        <p className="mt-6 max-w-xl text-lg text-nav-foreground/70">
+          A personal kanban for the Power List and every YouTube pipeline — with Claude ready to pick up the work.
+        </p>
+        <div className="mt-10 flex gap-3">
+          <Button asChild size="lg">
+            <Link to="/auth">Sign in</Link>
+          </Button>
+        </div>
+        <div className="mt-16 grid gap-6 text-sm text-nav-foreground/70 sm:grid-cols-3">
+          <Feature icon={<LayoutGrid className="h-5 w-5" />} title="Five boards" text="Power List plus four YouTube pipelines, seeded for you." />
+          <Feature icon={<Bot className="h-5 w-5" />} title="Claude assist" text="Queue a card, Claude posts its work back live." />
+          <Feature icon={<CalendarClock className="h-5 w-5" />} title="Weekly reset" text="One click rolls unfinished days back into the week." />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function Feature({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-2 font-semibold text-nav-foreground">
+        <span className="text-primary">{icon}</span>
+        {title}
+      </div>
+      {text}
     </div>
   );
 }
