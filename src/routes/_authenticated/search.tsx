@@ -4,7 +4,7 @@ import { searchQuery } from "@/lib/data";
 import { CardRow, type CardWithBoard } from "@/components/CardRow";
 
 export const Route = createFileRoute("/_authenticated/search")({
-  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s.q === "string" ? s.q : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s['q'] === "string" ? s['q'] : "" }),
   head: () => ({
     meta: [
       { title: "Search — Command Center" },
