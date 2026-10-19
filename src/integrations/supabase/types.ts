@@ -17,6 +17,7 @@ export type Database = {
       boards: {
         Row: {
           background: string
+          background_image: string | null
           board_type: string
           created_at: string
           id: string
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           background?: string
+          background_image?: string | null
           board_type?: string
           created_at?: string
           id?: string
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           background?: string
+          background_image?: string | null
           board_type?: string
           created_at?: string
           id?: string
