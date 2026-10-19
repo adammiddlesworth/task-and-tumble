@@ -190,7 +190,7 @@ function BoardPage() {
       .insert({ title: t, list_id: list.id, board_id: boardId, position: positionBetween(last?.position, null) })
       .select()
       .single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.setQueryData<BoardData>(key, (d) => (d ? { ...d, cards: [...d.cards, card as Card] } : d));
   }
 

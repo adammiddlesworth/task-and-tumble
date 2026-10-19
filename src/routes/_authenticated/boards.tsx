@@ -81,10 +81,10 @@ function BoardDialog({ board, maxPos, onClose }: { board: Board | null; maxPos: 
     if (!title.trim()) return;
     if (board) {
       const { error } = await supabase.from("boards").update({ title, background: bg }).eq("id", board.id);
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
     } else {
       const { data, error } = await supabase.from("boards").insert({ title, background: bg, board_type: type, position: maxPos + 1000 }).select().single();
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
       if (type === "youtube") {
         await supabase.from("lists").insert(YT_LISTS.map((t, i) => ({ board_id: data.id, title: t, position: (i + 1) * 1000 })));
       }
