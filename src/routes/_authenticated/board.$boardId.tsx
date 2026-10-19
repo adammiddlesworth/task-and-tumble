@@ -46,7 +46,7 @@ export const Route = createFileRoute("/_authenticated/board/$boardId")({
   }),
   loader: ({ context, params }) => context.queryClient.ensureQueryData(boardQuery(params.boardId)),
   component: BoardPage,
-  errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-8">Board not found.</div>,
 });
 
@@ -96,7 +96,7 @@ function BoardPage() {
 
   const containerOf = (id: string) => {
     if (id.startsWith("list:")) return id.slice(5);
-    return Object.keys(columns).find((k) => columns[k].includes(id));
+    return Object.keys(columns).find((k) => (columns[k] ?? []).includes(id));
   };
 
   function onDragStart(e: DragStartEvent) {
@@ -111,8 +111,8 @@ function BoardPage() {
     const to = containerOf(o);
     if (!from || !to || from === to) return;
     setColumns((cols) => {
-      const fromItems = cols[from].filter((x) => x !== a);
-      const toItems = [...cols[to]];
+      const fromItems = (cols[from] ?? []).filter((x) => x !== a);
+      const toItems = [...(cols[to] ?? [])];
       const overIdx = o.startsWith("list:") ? toItems.length : toItems.indexOf(o);
       toItems.splice(overIdx < 0 ? toItems.length : overIdx, 0, a);
       return { ...cols, [from]: fromItems, [to]: toItems };
@@ -135,7 +135,7 @@ function BoardPage() {
       const order = arrayMove(listOrder, oldIdx, newIdx);
       setListOrder(order);
       const i = order.indexOf(listId);
-      const pos = positionBetween(listById.get(order[i - 1])?.position, listById.get(order[i + 1])?.position);
+      const pos = positionBetween(listById.get(order[i - 1] ?? "")?.position, listById.get(order[i + 1] ?? "")?.position);
       qc.setQueryData<BoardData>(key, (d) =>
         d ? { ...d, lists: d.lists.map((l) => (l.id === listId ? { ...l, position: pos } : l)).sort((x, y) => x.position - y.position) } : d,
       );
@@ -149,7 +149,7 @@ function BoardPage() {
 
     const to = containerOf(o) ?? containerOf(a);
     if (!to) return;
-    let items = columns[to];
+    let items = columns[to] ?? [];
     if (!o.startsWith("list:")) {
       const oldIdx = items.indexOf(a);
       const newIdx = items.indexOf(o);
@@ -159,7 +159,7 @@ function BoardPage() {
     const i = items.indexOf(a);
     const card = cardById.get(a);
     if (!card) return;
-    const pos = positionBetween(cardById.get(items[i - 1])?.position, cardById.get(items[i + 1])?.position);
+    const pos = positionBetween(cardById.get(items[i - 1] ?? "")?.position, cardById.get(items[i + 1] ?? "")?.position);
     if (card.list_id === to && card.position === pos) return;
     qc.setQueryData<BoardData>(key, (d) =>
       d ? { ...d, cards: d.cards.map((c) => (c.id === a ? { ...c, list_id: to, position: pos } : c)) } : d,
@@ -184,7 +184,7 @@ function BoardPage() {
 
   async function addCard(list: List, t: string) {
     const ids = columns[list.id] ?? [];
-    const last = cardById.get(ids[ids.length - 1]);
+    const last = cardById.get(ids[ids.length - 1] ?? "");
     const { data: card, error } = await supabase
       .from("cards")
       .insert({ title: t, list_id: list.id, board_id: boardId, position: positionBetween(last?.position, null) })
