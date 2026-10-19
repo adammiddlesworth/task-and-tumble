@@ -18,8 +18,8 @@ export function useCoverActions(card: Card) {
   };
 
   async function upload(file: File) {
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Image must be under 10 MB");
+    if (!file.type.startsWith("image/")) { toast.error("Please choose an image"); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Image must be under 10 MB"); return; }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
