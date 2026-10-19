@@ -23,7 +23,9 @@ export const boardsQuery = () =>
     queryKey: ["boards"],
     queryFn: async () => {
       await supabase.rpc("seed_default_boards");
-      return check(await supabase.from("boards").select("*").order("position"));
+      const rows = check(await supabase.from("boards").select("*").order("position"));
+      const urls = await signCovers(rows.map((b) => b.background_image ?? ""));
+      return rows.map((b) => ({ ...b, bgUrl: b.background_image ? urls[b.background_image] ?? null : null }));
     },
   });
 
@@ -70,10 +72,11 @@ export const boardQuery = (boardId: string) =>
         }
       }
       const cardRows = check(cards);
-      const coverUrls = await signCovers(cardRows.map((c) => c.cover_url ?? ""));
+      const boardRow = check(board);
+      const coverUrls = await signCovers([...cardRows.map((c) => c.cover_url ?? ""), boardRow.background_image ?? ""]);
       return {
         coverUrls,
-        board: check(board),
+        board: boardRow,
         lists: check(lists),
         cards: cardRows,
         labels: check(labels),
