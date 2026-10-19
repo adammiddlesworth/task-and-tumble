@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedBoardsRouteImport } from './routes/_authenticated/boards'
+import { Route as AuthenticatedDueSoonRouteImport } from './routes/_authenticated/due-soon'
+import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedBoardBoardIdRouteImport } from './routes/_authenticated/board.$boardId'
 import { Route as AuthenticatedBoardBoardIdCardCardIdRouteImport } from './routes/_authenticated/board.$boardId.card.$cardId'
 
@@ -35,6 +38,21 @@ const AuthenticatedBoardsRoute = AuthenticatedBoardsRouteImport.update({
   path: '/boards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDueSoonRoute = AuthenticatedDueSoonRouteImport.update({
+  id: '/due-soon',
+  path: '/due-soon',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBoardBoardIdRoute =
   AuthenticatedBoardBoardIdRouteImport.update({
     id: '/board/$boardId',
@@ -52,6 +70,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/boards': typeof AuthenticatedBoardsRoute
+  '/due-soon': typeof AuthenticatedDueSoonRoute
+  '/review': typeof AuthenticatedReviewRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
   '/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
@@ -59,6 +80,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/boards': typeof AuthenticatedBoardsRoute
+  '/due-soon': typeof AuthenticatedDueSoonRoute
+  '/review': typeof AuthenticatedReviewRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
   '/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
@@ -68,6 +92,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/boards': typeof AuthenticatedBoardsRoute
+  '/_authenticated/due-soon': typeof AuthenticatedDueSoonRoute
+  '/_authenticated/review': typeof AuthenticatedReviewRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/board/$boardId': typeof AuthenticatedBoardBoardIdRouteWithChildren
   '/_authenticated/board/$boardId/card/$cardId': typeof AuthenticatedBoardBoardIdCardCardIdRoute
 }
@@ -77,6 +104,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/boards'
+    | '/due-soon'
+    | '/review'
+    | '/search'
     | '/board/$boardId'
     | '/board/$boardId/card/$cardId'
   fileRoutesByTo: FileRoutesByTo
@@ -84,6 +114,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/boards'
+    | '/due-soon'
+    | '/review'
+    | '/search'
     | '/board/$boardId'
     | '/board/$boardId/card/$cardId'
   id:
@@ -92,6 +125,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/boards'
+    | '/_authenticated/due-soon'
+    | '/_authenticated/review'
+    | '/_authenticated/search'
     | '/_authenticated/board/$boardId'
     | '/_authenticated/board/$boardId/card/$cardId'
   fileRoutesById: FileRoutesById
@@ -132,6 +168,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBoardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/due-soon': {
+      id: '/_authenticated/due-soon'
+      path: '/due-soon'
+      fullPath: '/due-soon'
+      preLoaderRoute: typeof AuthenticatedDueSoonRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/review': {
+      id: '/_authenticated/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AuthenticatedReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/board/$boardId': {
       id: '/_authenticated/board/$boardId'
       path: '/board/$boardId'
@@ -166,11 +223,17 @@ const AuthenticatedBoardBoardIdRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBoardsRoute: typeof AuthenticatedBoardsRoute
+  AuthenticatedDueSoonRoute: typeof AuthenticatedDueSoonRoute
+  AuthenticatedReviewRoute: typeof AuthenticatedReviewRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedBoardBoardIdRoute: typeof AuthenticatedBoardBoardIdRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBoardsRoute: AuthenticatedBoardsRoute,
+  AuthenticatedDueSoonRoute: AuthenticatedDueSoonRoute,
+  AuthenticatedReviewRoute: AuthenticatedReviewRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedBoardBoardIdRoute: AuthenticatedBoardBoardIdRouteWithChildren,
 }
 

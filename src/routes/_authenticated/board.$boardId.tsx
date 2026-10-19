@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -331,7 +331,6 @@ function BoardPage() {
         </AlertDialogContent>
       </AlertDialog>
       <Outlet />
-      <span className="hidden"><Link to="/boards">Boards</Link></span>
     </div>
   );
 }
