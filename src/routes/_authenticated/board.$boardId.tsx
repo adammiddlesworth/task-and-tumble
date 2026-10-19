@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { boardQuery, type BoardData, type Card, type List } from "@/lib/data";
 import { positionBetween } from "@/lib/position";
 import { ListColumn } from "@/components/board/ListColumn";
+import { BackgroundPicker } from "@/components/board/BackgroundPicker";
 import { CardFaceView } from "@/components/board/CardFace";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -230,10 +231,15 @@ function BoardPage() {
   }
 
   const isPower = data.board.board_type === "power_list";
+  const bgUrl = data.board.background_image ? data.coverUrls[data.board.background_image] : undefined;
   const activeCard = activeId && !activeId.startsWith("list:") ? cardById.get(activeId) : null;
 
   return (
-    <div data-board-bg={data.board.background} className="flex h-full flex-col">
+    <div
+      data-board-bg={data.board.background}
+      className="flex h-full flex-col bg-cover bg-center"
+      style={bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.25), oklch(0 0 0 / 0.1)), url("${bgUrl}")` } : undefined}
+    >
       <div className="board-text flex flex-wrap items-center gap-2 px-4 py-3">
         <input
           value={title}
@@ -246,16 +252,19 @@ function BoardPage() {
         <button onClick={toggleStar} className="board-ghost rounded-md p-1.5" aria-label="Star">
           <Star className={`h-4 w-4 ${data.board.is_starred ? "fill-current" : ""}`} />
         </button>
+        <div className="ml-auto flex flex-wrap gap-2">
+          <BackgroundPicker board={data.board} />
         {isPower && (
-          <div className="ml-auto flex gap-2">
+          <>
             <button onClick={() => setConfirmReset(true)} className="board-ghost flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium">
               <RotateCcw className="h-4 w-4" /> Weekly Reset
             </button>
             <button onClick={() => setConfirmArchive(true)} className="board-ghost flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium">
               <Archive className="h-4 w-4" /> Archive Completed
             </button>
-          </div>
+          </>
         )}
+        </div>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
