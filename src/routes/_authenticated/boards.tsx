@@ -31,7 +31,7 @@ function BoardsPage() {
   const [editing, setEditing] = useState<Board | "new" | null>(null);
 
   async function toggleStar(b: Board) {
-    qc.setQueryData<Board[]>(["boards"], (d) => d?.map((x) => (x.id === b.id ? { ...x, is_starred: !b.is_starred } : x)));
+    qc.setQueryData<(Board & { bgUrl: string | null })[]>(["boards"], (d) => d?.map((x) => (x.id === b.id ? { ...x, is_starred: !b.is_starred } : x)));
     await supabase.from("boards").update({ is_starred: !b.is_starred }).eq("id", b.id);
   }
 
@@ -50,7 +50,7 @@ function BoardsPage() {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((b) => (
-          <div key={b.id} data-board-bg={b.background} className="group relative h-32 overflow-hidden rounded-xl shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+          <div key={b.id} data-board-bg={b.background} style={b.bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.35), oklch(0 0 0 / 0.15)), url("${b.bgUrl}")` } : undefined} className="group relative h-32 bg-cover bg-center overflow-hidden rounded-xl shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
             <Link to="/board/$boardId" params={{ boardId: b.id }} className="board-text absolute inset-0 flex flex-col justify-between p-4">
               <span className="font-display text-xl font-bold leading-tight">{b.title}</span>
               <span className="text-xs uppercase tracking-wider opacity-75">{b.board_type === "power_list" ? "Power List" : "YouTube pipeline"}</span>

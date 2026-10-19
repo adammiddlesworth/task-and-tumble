@@ -22,6 +22,13 @@
       "when": 1792452507558,
       "tag": "0002_card_covers_read_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792452888838,
+      "tag": "0003_board_background_image",
+      "breakpoints": true
     }
   ]
 }
