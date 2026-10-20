@@ -40,6 +40,20 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
               {LABEL_COLORS.map((c) => (
                 <button type="button" key={c} data-label={c} onClick={() => setEdit({ ...edit, color: c })} className={`h-7 rounded ${edit.color === c ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`} aria-label={c} title={c} />
               ))}
+              <label
+                title="Custom color"
+                style={labelStyle(edit.color)}
+                className={`relative flex h-7 cursor-pointer items-center justify-center rounded border border-dashed border-border ${isCustomColor(edit.color) ? "text-[oklch(0.99_0_0)] ring-2 ring-ring ring-offset-1 ring-offset-background" : "text-muted-foreground"}`}
+              >
+                <PenLine className="h-4 w-4" />
+                <input
+                  type="color"
+                  aria-label="Custom color"
+                  value={isCustomColor(edit.color) ? edit.color : "#00c864"}
+                  onChange={(e) => setEdit({ ...edit, color: e.target.value })}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                />
+              </label>
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={saveLabel}>Save</Button>
