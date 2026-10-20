@@ -2,11 +2,12 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Bot, CheckSquare, Target, CheckCircle2 } from "lucide-react";
+import { Bot, CheckSquare, Target, CheckCircle2, PanelsTopLeft } from "lucide-react";
 import { toast } from "sonner";
 import { DueBadge, StatusPill } from "@/components/badges";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateCard, type Card, type Label } from "@/lib/data";
+import { CardQuickEdit } from "@/components/card/CardQuickEdit";
 
 type Props = {
   card: Card;
@@ -43,7 +44,8 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onT
         ) : (
           card.is_complete && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--due-complete)]" />
         )}
-        <p className={`text-sm leading-snug ${card.is_complete ? "text-muted-foreground line-through" : ""}`}>{card.title}</p>
+        <p className={`min-w-0 break-words pr-5 text-sm leading-snug ${card.is_complete ? "text-muted-foreground line-through" : ""}`}>{card.title}</p>
+        {card.sourceCardId && <PanelsTopLeft className="h-3.5 w-3.5 shrink-0 text-claude" aria-label="Mirrored card" />}
       </div>
       {(card.due_date || checklist?.total || card.claude_enabled || goalCount || card.claude_status !== "off") && (
         <div className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
@@ -83,9 +85,10 @@ export function SortableCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={() => navigate({ to: "/board/$boardId/card/$cardId", params: { boardId: props.card.board_id, cardId: props.card.id } })}
-      className={`group cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-all hover:ring-2 hover:ring-primary ${isDragging ? "opacity-40" : ""}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-all hover:ring-2 hover:ring-primary ${isDragging ? "opacity-40" : ""}`}
     >
       <CardFaceView {...props} onToggleComplete={toggleComplete} />
+      <div className="absolute right-1 top-1"><CardQuickEdit card={props.card} /></div>
     </div>
   );
 }

@@ -11,6 +11,8 @@ export const Route = createFileRoute("/_authenticated/search")({
       { name: "description", content: "Search cards and boards." },
       { property: "og:title", content: "Search — Command Center" },
       { property: "og:description", content: "Search cards and boards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SearchPage,

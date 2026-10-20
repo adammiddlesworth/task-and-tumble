@@ -34,14 +34,28 @@ export function AppShell() {
       .channel("cards-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "cards" }, (payload) => {
         const row = (payload.new ?? payload.old) as { id?: string; board_id?: string };
-        if (row.board_id) qc.invalidateQueries({ queryKey: ["board", row.board_id] });
-        if (row.id) qc.invalidateQueries({ queryKey: ["card", row.id] });
+        qc.invalidateQueries({ queryKey: ["board"] });
+        qc.invalidateQueries({ queryKey: ["card"] });
         qc.invalidateQueries({ queryKey: ["review"] });
         qc.invalidateQueries({ queryKey: ["due-soon"] });
       })
       .subscribe();
+    const detailsChannel = supabase.channel("card-details-live");
+    for (const table of ["card_mirrors", "card_labels", "labels", "checklists", "checklist_items", "card_members", "board_members", "youtube_details"]) {
+      detailsChannel.on("postgres_changes", { event: "*", schema: "public", table }, () => qc.invalidateQueries());
+    }
+    detailsChannel.subscribe();
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        qc.invalidateQueries({ queryKey: ["board"] });
+        qc.invalidateQueries({ queryKey: ["card"] });
+        qc.invalidateQueries({ queryKey: ["card-people"] });
+      }
+    }, 15000);
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(detailsChannel);
+      window.clearInterval(interval);
     };
   }, [qc]);
 

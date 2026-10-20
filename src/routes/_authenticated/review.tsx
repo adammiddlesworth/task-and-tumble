@@ -8,6 +8,7 @@ import { CardRow, type CardWithBoard } from "@/components/CardRow";
 import { Markdown } from "@/components/Markdown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { canonicalCardId } from "@/lib/card-actions";
 
 export const Route = createFileRoute("/_authenticated/review")({
   head: () => ({
@@ -16,6 +17,8 @@ export const Route = createFileRoute("/_authenticated/review")({
       { name: "description", content: "Approve or redo Claude's work across all boards." },
       { property: "og:title", content: "Claude Review — Command Center" },
       { property: "og:description", content: "Approve or redo Claude's work across all boards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(reviewQuery()),
@@ -59,7 +62,7 @@ function ReviewItem({ card }: { card: CardWithBoard }) {
       <div className="mt-2 flex gap-2">
         <Button size="sm" onClick={async () => {
           await updateCard(qc, card, { claude_status: "off", claude_enabled: false }).catch((e) => toast.error(e.message));
-          logActivity(card.id, "approved Claude output");
+          logActivity(canonicalCardId(card), "approved Claude output");
           done();
         }}>
           <Check className="mr-1 h-4 w-4" /> Approve
@@ -68,7 +71,7 @@ function ReviewItem({ card }: { card: CardWithBoard }) {
           if (notes === null) return setNotes("");
           const instr = notes.trim() ? `${card.claude_instructions ?? ""}\n\nRedo notes: ${notes.trim()}`.trim() : card.claude_instructions;
           await updateCard(qc, card, { claude_status: "queued", claude_instructions: instr }).catch((e) => toast.error(e.message));
-          logActivity(card.id, "requested redo from Claude");
+          logActivity(canonicalCardId(card), "requested redo from Claude");
           done();
         }}>
           <RotateCcw className="mr-1 h-4 w-4" /> {notes === null ? "Redo" : "Send redo"}

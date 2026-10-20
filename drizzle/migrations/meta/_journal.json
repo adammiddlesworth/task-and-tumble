@@ -43,6 +43,41 @@
       "when": 1792498568399,
       "tag": "0005_card_start_date",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792500455660,
+      "tag": "0006_card_actions_mirrors_and_board_sharing",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792500668319,
+      "tag": "0007_protect_mirror_source_and_shared_labels",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792500741139,
+      "tag": "0008_fix_card_location_trigger_record_shape",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792500779138,
+      "tag": "0009_allow_new_card_returning_for_collaborators",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792501109345,
+      "tag": "0010_secure_shared_label_creation_and_placement_ids",
+      "breakpoints": true
     }
   ]
 }

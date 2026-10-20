@@ -14,6 +14,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in to your Command Center boards." },
       { property: "og:title", content: "Sign in — Command Center" },
       { property: "og:description", content: "Sign in to your Command Center boards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -29,9 +31,14 @@ function AuthPage() {
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => data.session && navigate({ to: "/boards", replace: true }));
+    const afterSignIn = () => {
+      const token = sessionStorage.getItem("cc-invite");
+      if (token) { sessionStorage.removeItem("cc-invite"); navigate({ to: "/invite", search: { token }, replace: true }); }
+      else navigate({ to: "/boards", replace: true });
+    };
+    supabase.auth.getSession().then(({ data }) => data.session && afterSignIn());
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) navigate({ to: "/boards", replace: true });
+      if (session) afterSignIn();
     });
     return () => data.subscription.unsubscribe();
   }, [navigate]);

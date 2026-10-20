@@ -24,12 +24,11 @@ export function useCoverActions(card: Card) {
     try {
       const { data: u } = await supabase.auth.getUser();
       const ext = file.name.split(".").pop() || "jpg";
-      const path = `${u.user!.id}/${card.id}/${Date.now()}.${ext}`;
+      if (!u.user) throw new Error("Sign in to upload a cover");
+      const path = `${u.user.id}/${card.id}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from(COVER_BUCKET).upload(path, file, { contentType: file.type });
       if (error) throw error;
-      const old = card.cover_url;
       await updateCard(qc, card, { cover_url: path });
-      if (old) await supabase.storage.from(COVER_BUCKET).remove([old]);
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Upload failed");
@@ -39,9 +38,7 @@ export function useCoverActions(card: Card) {
   }
 
   async function remove() {
-    const old = card.cover_url;
     await updateCard(qc, card, { cover_url: null });
-    if (old) await supabase.storage.from(COVER_BUCKET).remove([old]);
     refresh();
   }
 
@@ -80,14 +77,15 @@ export function CoverBanner({ card, url }: { card: Card; url: string | null }) {
   );
 }
 
-export function CoverButton({ card }: { card: Card }) {
-  const { pick, busy, fileInput } = useCoverActions(card);
+export function CoverButton({ card, allowRemove = false }: { card: Card; allowRemove?: boolean }) {
+  const { pick, remove, busy, fileInput } = useCoverActions(card);
   return (
     <>
       {fileInput}
       <Button size="sm" variant="secondary" onClick={pick} disabled={busy}>
         <ImagePlus className="mr-1 h-4 w-4" /> {busy ? "Uploading…" : card.cover_url ? "Change cover" : "Cover"}
       </Button>
+      {allowRemove && card.cover_url && <Button variant="ghost" size="sm" onClick={() => remove().catch((e) => toast.error(e.message))}><Trash2 className="mr-1 h-4 w-4" /> Remove cover</Button>}
     </>
   );
 }

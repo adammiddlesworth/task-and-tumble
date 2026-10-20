@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      board_invites: {
+        Row: {
+          accepted_at: string | null
+          board_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          board_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          board_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_invites_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      board_members: {
+        Row: {
+          board_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          board_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_members_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       boards: {
         Row: {
           background: string
@@ -122,6 +193,102 @@ export type Database = {
             columns: ["label_id"]
             isOneToOne: false
             referencedRelation: "labels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_members: {
+        Row: {
+          card_id: string
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_members_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_members_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "claude_queue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_mirrors: {
+        Row: {
+          archived: boolean
+          board_id: string
+          card_id: string
+          created_at: string
+          id: string
+          list_id: string
+          position: number
+        }
+        Insert: {
+          archived?: boolean
+          board_id: string
+          card_id: string
+          created_at?: string
+          id?: string
+          list_id: string
+          position?: number
+        }
+        Update: {
+          archived?: boolean
+          board_id?: string
+          card_id?: string
+          created_at?: string
+          id?: string
+          list_id?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_mirrors_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_mirrors_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_mirrors_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "claude_queue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_mirrors_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
             referencedColumns: ["id"]
           },
         ]
@@ -501,7 +668,42 @@ export type Database = {
       }
     }
     Functions: {
+      accept_board_invite: { Args: { _token: string }; Returns: string }
+      add_card_label: {
+        Args: { _card_id: string; _color: string; _name: string }
+        Returns: string
+      }
       archive_completed: { Args: { _board_id: string }; Returns: number }
+      board_people: {
+        Args: { _board_id: string }
+        Returns: {
+          full_name: string
+          is_owner: boolean
+          user_id: string
+        }[]
+      }
+      can_access_board: { Args: { _board_id: string }; Returns: boolean }
+      can_access_card: { Args: { _card_id: string }; Returns: boolean }
+      can_edit_label: { Args: { _label_id: string }; Returns: boolean }
+      card_destination: {
+        Args: {
+          _board_id: string
+          _card_id: string
+          _index: number
+          _list_id: string
+          _mode: string
+          _title?: string
+        }
+        Returns: string
+      }
+      card_people: {
+        Args: { _card_id: string }
+        Returns: {
+          full_name: string
+          is_assigned: boolean
+          user_id: string
+        }[]
+      }
       owns_board: { Args: { _board_id: string }; Returns: boolean }
       seed_default_boards: { Args: never; Returns: undefined }
       weekly_reset: { Args: { _board_id: string }; Returns: undefined }
