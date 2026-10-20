@@ -7,7 +7,7 @@
 - [ ] Verify collaboration as a second invited account; blocked on a second user's signed-in session.
 
 # Board switching
-- [ ] Add and verify a bottom-left Pomodoro timer with 25/5 and 50/10 schedules.
+- [x] Bottom-left Pomodoro timer with 25/5 and 50/10 schedules; verified start/pause/reset, navigation continuity, and phase completion; 4 tests pass.
 - [x] Floating "Switch boards" button at the bottom right opening search, starred, recent and all boards; verified on desktop and phone widths.
 
 # Card comments
