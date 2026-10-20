@@ -144,6 +144,7 @@ export type Database = {
           is_complete: boolean
           list_id: string
           position: number
+          start_date: string | null
           title: string
           updated_at: string
         }
@@ -164,6 +165,7 @@ export type Database = {
           is_complete?: boolean
           list_id: string
           position?: number
+          start_date?: string | null
           title: string
           updated_at?: string
         }
@@ -184,6 +186,7 @@ export type Database = {
           is_complete?: boolean
           list_id?: string
           position?: number
+          start_date?: string | null
           title?: string
           updated_at?: string
         }
