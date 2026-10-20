@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { Archive, Target, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { boardQuery, cardQuery, logActivity, updateCard, type BoardData } from "@/lib/data";
+import { boardQuery, cardQuery, labelStyle, logActivity, updateCard, type BoardData } from "@/lib/data";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -104,7 +104,7 @@ function CardModal() {
             />
             <DueBadge due={card.due_date} complete={card.is_complete} />
             {board.labels.filter((l) => data.labelIds.includes(l.id)).map((l) => (
-              <span key={l.id} data-label={l.color} className="rounded px-2 py-0.5 text-xs font-medium text-[oklch(0.99_0_0)]">{l.name || " "}</span>
+              <span key={l.id} data-label={l.color} style={labelStyle(l.color)} className="rounded px-2 py-0.5 text-xs font-medium text-[oklch(0.99_0_0)]">{l.name || " "}</span>
             ))}
           </div>
 

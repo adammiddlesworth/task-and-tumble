@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Pencil, Plus, Tag, Trash2 } from "lucide-react";
+import { Check, PenLine, Pencil, Plus, Tag, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { LABEL_COLORS, type Label } from "@/lib/data";
+import { LABEL_COLORS, isCustomColor, labelStyle, type Label } from "@/lib/data";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,20 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
               {LABEL_COLORS.map((c) => (
                 <button type="button" key={c} data-label={c} onClick={() => setEdit({ ...edit, color: c })} className={`h-7 rounded ${edit.color === c ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`} aria-label={c} title={c} />
               ))}
+              <label
+                title="Custom color"
+                style={labelStyle(edit.color)}
+                className={`relative flex h-7 cursor-pointer items-center justify-center rounded border border-dashed border-border ${isCustomColor(edit.color) ? "text-[oklch(0.99_0_0)] ring-2 ring-ring ring-offset-1 ring-offset-background" : "text-muted-foreground"}`}
+              >
+                <PenLine className="h-4 w-4" />
+                <input
+                  type="color"
+                  aria-label="Custom color"
+                  value={isCustomColor(edit.color) ? edit.color : "#00c864"}
+                  onChange={(e) => setEdit({ ...edit, color: e.target.value })}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                />
+              </label>
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={saveLabel}>Save</Button>
@@ -54,7 +68,7 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
           <div className="space-y-1.5">
             {labels.map((l) => (
               <div key={l.id} className="flex items-center gap-1.5">
-                <button type="button" data-label={l.color} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-[oklch(0.99_0_0)] transition hover:opacity-90">
+                <button type="button" data-label={l.color} style={labelStyle(l.color)} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-[oklch(0.99_0_0)] transition hover:opacity-90">
                   {l.name}
                   {selected.includes(l.id) && <Check className="h-4 w-4" />}
                 </button>
