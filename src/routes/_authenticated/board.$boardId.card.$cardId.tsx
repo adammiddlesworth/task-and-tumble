@@ -20,6 +20,7 @@ import { LabelPicker } from "@/components/card/LabelPicker";
 import { CoverBanner, CoverButton } from "@/components/card/CoverImage";
 import { CardMembers } from "@/components/card/Members";
 import { archivePlacement } from "@/lib/card-actions";
+import { CardComments } from "@/components/card/CardComments";
 
 export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardId")({
   head: () => ({
@@ -140,6 +141,8 @@ function CardModal() {
           )}
 
           <div className="ml-8"><AiAssist card={card} /></div>
+
+          <div className="ml-8"><CardComments key={card.id} cardId={card.id} /></div>
 
           {data.activity.length > 0 && (
             <div className="ml-8 space-y-1">
