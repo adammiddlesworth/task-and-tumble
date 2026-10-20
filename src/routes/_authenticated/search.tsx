@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { searchQuery } from "@/lib/data";
+import { boardBgStyle, searchQuery } from "@/lib/data";
 import { CardRow, type CardWithBoard } from "@/components/CardRow";
 
 export const Route = createFileRoute("/_authenticated/search")({
@@ -31,7 +31,7 @@ function SearchPage() {
           {data.boards.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {data.boards.map((b) => (
-                <Link key={b.id} to="/board/$boardId" params={{ boardId: b.id }} data-board-bg={b.background} className="board-text rounded-lg px-3 py-2 text-sm font-semibold">{b.title}</Link>
+                <Link key={b.id} to="/board/$boardId" params={{ boardId: b.id }} data-board-bg={b.background} style={boardBgStyle(b.background)} className="board-text rounded-lg px-3 py-2 text-sm font-semibold">{b.title}</Link>
               ))}
             </div>
           )}
