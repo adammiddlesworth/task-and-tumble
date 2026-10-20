@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Bot, CalendarClock, LayoutGrid, LogOut, Moon, Search, Sun } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { reviewQuery } from "@/lib/data";
+import { BoardSwitcher, rememberRecentBoard } from "@/components/board/BoardSwitcher";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -22,6 +23,12 @@ export function AppShell() {
   const [q, setQ] = useState("");
   const [dark, setDark] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const currentBoardId = path.startsWith("/board/") ? path.split("/")[2] : undefined;
+
+  // Keep a short "recently opened" list for the board switcher
+  useEffect(() => {
+    if (currentBoardId) rememberRecentBoard(currentBoardId);
+  }, [currentBoardId]);
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
@@ -142,6 +149,7 @@ export function AppShell() {
       <main className="min-h-0 flex-1 overflow-auto">
         <Outlet />
       </main>
+      <BoardSwitcher currentBoardId={currentBoardId} />
     </div>
   );
 }
