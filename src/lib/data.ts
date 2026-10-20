@@ -45,6 +45,7 @@ export type BoardData = {
   labels: Label[];
   cardLabels: { card_id: string; label_id: string }[];
   checklistStats: Record<string, { done: number; total: number }>;
+  checklistItems: Record<string, { id: string; text: string; is_done: boolean }[]>;
   coverUrls: Record<string, string>;
 };
 
@@ -87,14 +88,17 @@ export const boardQuery = (boardId: string) =>
         supabase.from("cards").select("*").eq("board_id", boardId).eq("archived", false).order("position"),
         supabase.from("labels").select("*").eq("board_id", boardId),
         supabase.from("card_labels").select("card_id, label_id, cards!inner(board_id)").eq("cards.board_id", boardId),
-        supabase.from("checklists").select("card_id, checklist_items(is_done), cards!inner(board_id)").eq("cards.board_id", boardId),
+        supabase.from("checklists").select("card_id, checklist_items(id, text, is_done, position), cards!inner(board_id)").eq("cards.board_id", boardId),
       ]);
       const checklistStats: BoardData["checklistStats"] = {};
+      const checklistItems: BoardData["checklistItems"] = {};
       for (const c of check(checklists) ?? []) {
         const s = (checklistStats[c.card_id] ??= { done: 0, total: 0 });
-        for (const i of c.checklist_items ?? []) {
+        const items = (checklistItems[c.card_id] ??= []);
+        for (const i of [...(c.checklist_items ?? [])].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))) {
           s.total++;
           if (i.is_done) s.done++;
+          items.push({ id: i.id, text: i.text, is_done: i.is_done });
         }
       }
       const mirrors = check(await supabase.from("card_mirrors").select("*").eq("board_id", boardId).eq("archived", false));
@@ -105,10 +109,11 @@ export const boardQuery = (boardId: string) =>
       });
       const sourceIds = sources.map((c) => c.id);
       const mirrorLabels = sourceIds.length ? check(await supabase.from("card_labels").select("card_id,label_id,labels(*)").in("card_id", sourceIds)) : [];
-      const mirrorChecks = sourceIds.length ? check(await supabase.from("checklists").select("card_id,checklist_items(is_done)").in("card_id", sourceIds)) : [];
+      const mirrorChecks = sourceIds.length ? check(await supabase.from("checklists").select("card_id,checklist_items(id, text, is_done, position)").in("card_id", sourceIds)) : [];
       for (const m of mirrors) {
         const items = mirrorChecks.filter((cl) => cl.card_id === m.card_id).flatMap((cl) => cl.checklist_items ?? []);
         checklistStats[m.id] = { done: items.filter((i) => i.is_done).length, total: items.length };
+        checklistItems[m.id] = [...items].sort((a, b) => (a.position ?? 0) - (b.position ?? 0)).map((i) => ({ id: i.id, text: i.text, is_done: i.is_done }));
       }
       const cardRows = [...check(cards), ...mirroredCards].sort((a, b) => a.position - b.position);
       const boardRow = check(board);
@@ -121,6 +126,7 @@ export const boardQuery = (boardId: string) =>
         labels: [...new Map([...check(labels), ...mirrorLabels.flatMap((r) => r.labels ? [r.labels] : [])].map((l) => [l.id, l])).values()],
         cardLabels: [...(check(cl) ?? []).map((r) => ({ card_id: r.card_id, label_id: r.label_id })), ...mirrors.flatMap((m) => mirrorLabels.filter((r) => r.card_id === m.card_id).map((r) => ({ card_id: m.id, label_id: r.label_id })))],
         checklistStats,
+        checklistItems,
       };
     },
   });
