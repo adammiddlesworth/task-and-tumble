@@ -13,6 +13,7 @@ import { CardMembers } from "@/components/card/Members";
 import { LabelPicker } from "@/components/card/LabelPicker";
 import { CoverButton } from "@/components/card/CoverImage";
 import { DatesForm } from "@/components/card/DueDatePopover";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Panel = "menu" | "labels" | "members" | "cover" | "dates" | "move" | "copy" | "mirror";
 const actions = [
@@ -21,13 +22,14 @@ const actions = [
 ] as const;
 
 export function CardQuickEdit({ card }: { card: Card }) {
+  const mobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>("menu");
   const [title, setTitle] = useState(card.title);
   return <span onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (v) { setTitle(card.title); setPanel("menu"); } }}>
       <PopoverTrigger asChild><Button variant="secondary" size="icon" aria-label={`Edit ${card.title}`} title="Edit card" className="h-7 w-7 rounded-full opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 max-sm:opacity-100"><SquarePen className="h-3.5 w-3.5" /></Button></PopoverTrigger>
-      {open && <PopoverContent side="right" align="start" collisionPadding={12} className="max-h-[85vh] w-80 max-w-[calc(100vw-2rem)] overflow-y-auto p-3" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+      {open && <PopoverContent side={mobile ? "bottom" : "right"} align={mobile ? "end" : "start"} collisionPadding={12} className="max-h-[85vh] w-80 max-w-[calc(100vw-2rem)] overflow-y-auto p-3" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
         <QuickEditContents card={card} panel={panel} setPanel={setPanel} title={title} setTitle={setTitle} close={() => setOpen(false)} />
       </PopoverContent>}
     </Popover>
