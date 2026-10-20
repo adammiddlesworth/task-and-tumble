@@ -12,10 +12,10 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Command Center" },
-      { name: "description", content: "Sign in to your Command Center boards." },
-      { property: "og:title", content: "Sign in — Command Center" },
-      { property: "og:description", content: "Sign in to your Command Center boards." },
+      { title: "Sign in — Kommand" },
+      { name: "description", content: "Sign in to your Kommand boards." },
+      { property: "og:title", content: "Sign in — Kommand" },
+      { property: "og:description", content: "Sign in to your Kommand boards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

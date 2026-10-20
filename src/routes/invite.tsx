@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/invite")({
   validateSearch: (search: Record<string, unknown>) => ({ token: typeof search['token'] === "string" ? search['token'] : "" }),
-  head: () => ({ meta: [{ title: "Board invitation — Command Center" }, { name: "description", content: "Accept your invitation to collaborate on a Command Center board." }, { property: "og:title", content: "Board invitation — Command Center" }, { property: "og:description", content: "Join a shared Command Center board." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
+  head: () => ({ meta: [{ title: "Board invitation — Kommand" }, { name: "description", content: "Accept your invitation to collaborate on a Kommand board." }, { property: "og:title", content: "Board invitation — Kommand" }, { property: "og:description", content: "Join a shared Kommand board." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: InvitePage,
 });
 function InvitePage() {

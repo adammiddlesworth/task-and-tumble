@@ -41,10 +41,10 @@ import {
 export const Route = createFileRoute("/_authenticated/board/$boardId")({
   head: () => ({
     meta: [
-      { title: "Board — Command Center" },
-      { name: "description", content: "Kanban board in Command Center." },
-      { property: "og:title", content: "Board — Command Center" },
-      { property: "og:description", content: "Kanban board in Command Center." },
+      { title: "Board — Kommand" },
+      { name: "description", content: "Kanban board in Kommand." },
+      { property: "og:title", content: "Board — Kommand" },
+      { property: "og:description", content: "Kanban board in Kommand." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

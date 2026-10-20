@@ -13,9 +13,9 @@ import { canonicalCardId } from "@/lib/card-actions";
 export const Route = createFileRoute("/_authenticated/review")({
   head: () => ({
     meta: [
-      { title: "Claude Review — Command Center" },
+      { title: "Claude Review — Kommand" },
       { name: "description", content: "Approve or redo Claude's work across all boards." },
-      { property: "og:title", content: "Claude Review — Command Center" },
+      { property: "og:title", content: "Claude Review — Kommand" },
       { property: "og:description", content: "Approve or redo Claude's work across all boards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

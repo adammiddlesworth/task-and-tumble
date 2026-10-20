@@ -16,10 +16,10 @@ const YT_LISTS = ["Ideas", "Researching", "Scripting", "Ready to Film", "Editing
 export const Route = createFileRoute("/_authenticated/boards")({
   head: () => ({
     meta: [
-      { title: "Boards — Command Center" },
-      { name: "description", content: "All your Command Center boards." },
-      { property: "og:title", content: "Boards — Command Center" },
-      { property: "og:description", content: "All your Command Center boards." },
+      { title: "Boards — Kommand" },
+      { name: "description", content: "All your Kommand boards." },
+      { property: "og:title", content: "Boards — Kommand" },
+      { property: "og:description", content: "All your Kommand boards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

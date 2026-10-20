@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Command Center — Personal kanban with Claude" },
+      { title: "Kommand — Personal kanban with Claude" },
       { name: "description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
-      { property: "og:title", content: "Command Center — Personal kanban with Claude" },
+      { property: "og:title", content: "Kommand — Personal kanban with Claude" },
       { property: "og:description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
