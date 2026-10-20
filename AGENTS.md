@@ -18,3 +18,4 @@
 - Move/copy/mirror operations use the atomic `card_destination` RPC; copies duplicate checklist rows and map labels to the destination board.
 - Invitations are email-bound, expiring links accepted only by matching verified accounts; no automatic email delivery is implied.
 - Cover objects are retained on replacement/removal because independent copies may still reference them.
+- Signed image URLs are cached per storage path in the session-scoped QueryClient until before expiry, so routine board refreshes do not reload unchanged backgrounds or covers; clearing the client on sign-out also clears these URLs.
