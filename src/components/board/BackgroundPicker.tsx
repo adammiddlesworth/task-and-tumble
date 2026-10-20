@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Paintbrush, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { BOARD_COLORS, COVER_BUCKET, type Board } from "@/lib/data";
+import { BOARD_COLORS, COVER_BUCKET, isCustomColor, type Board } from "@/lib/data";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +11,7 @@ export function BackgroundPicker({ board }: { board: Board }) {
   const qc = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState(isCustomColor(board.background) ? board.background : "#1e3a5f");
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["board", board.id] });
@@ -70,6 +71,19 @@ export function BackgroundPicker({ board }: { board: Board }) {
               className={`h-10 rounded-md ring-offset-2 ring-offset-background ${!board.background_image && board.background === c ? "ring-2 ring-ring" : ""}`}
             />
           ))}
+        </div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Custom color</p>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            aria-label="Custom color"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            className="h-10 w-14 cursor-pointer rounded-md border border-border bg-transparent p-0.5"
+          />
+          <Button size="sm" variant="secondary" className="flex-1" onClick={() => setColor(draft)} disabled={!board.background_image && board.background === draft}>
+            Apply color
+          </Button>
         </div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Image</p>
         <input

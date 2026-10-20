@@ -18,7 +18,7 @@ import { SortableContext, arrayMove, horizontalListSortingStrategy } from "@dnd-
 import { Archive, Plus, RotateCcw, Star } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { boardQuery, type BoardData, type Card, type List } from "@/lib/data";
+import { boardBgStyle, boardQuery, type BoardData, type Card, type List } from "@/lib/data";
 import { positionBetween } from "@/lib/position";
 import { ListColumn } from "@/components/board/ListColumn";
 import { BackgroundPicker } from "@/components/board/BackgroundPicker";
@@ -249,7 +249,7 @@ function BoardPage() {
     <div
       data-board-bg={data.board.background}
       className="flex h-full flex-col bg-cover bg-center"
-      style={bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.25), oklch(0 0 0 / 0.1)), url("${bgUrl}")` } : undefined}
+      style={{ ...boardBgStyle(data.board.background), ...(bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.25), oklch(0 0 0 / 0.1)), url("${bgUrl}")` } : {}) }}
     >
       <div className="board-text flex flex-wrap items-center gap-2 px-4 py-3">
         <input

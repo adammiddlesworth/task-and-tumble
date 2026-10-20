@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pencil, Plus, Star } from "lucide-react";
+import { Palette, Pencil, Plus, Star } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { BOARD_COLORS, boardsQuery, type Board } from "@/lib/data";
+import { BOARD_COLORS, boardBgStyle, boardsQuery, isCustomColor, type Board } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -53,7 +53,7 @@ function BoardsPage() {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((b) => (
-          <div key={b.id} data-board-bg={b.background} style={b.bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.35), oklch(0 0 0 / 0.15)), url("${b.bgUrl}")` } : undefined} className="group relative h-32 bg-cover bg-center overflow-hidden rounded-xl shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+          <div key={b.id} data-board-bg={b.background} style={{ ...boardBgStyle(b.background), ...(b.bgUrl ? { backgroundImage: `linear-gradient(oklch(0 0 0 / 0.35), oklch(0 0 0 / 0.15)), url("${b.bgUrl}")` } : {}) }} className="group relative h-32 bg-cover bg-center overflow-hidden rounded-xl shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
             <Link to="/board/$boardId" params={{ boardId: b.id }} className="board-text absolute inset-0 flex flex-col justify-between p-4">
               <span className="font-display text-xl font-bold leading-tight">{b.title}</span>
               <span className="text-xs uppercase tracking-wider opacity-75">{b.board_type === "power_list" ? "Power List" : "YouTube pipeline"}</span>
@@ -104,10 +104,14 @@ function BoardDialog({ board, maxPos, onClose }: { board: Board | null; maxPos: 
         </DialogHeader>
         <div className="space-y-4">
           <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Board title" onKeyDown={(e) => e.key === "Enter" && save()} />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {BOARD_COLORS.map((c) => (
               <button key={c} data-board-bg={c} onClick={() => setBg(c)} aria-label={c} className={`h-8 w-10 rounded-md ring-offset-2 ring-offset-background ${bg === c ? "ring-2 ring-ring" : ""}`} />
             ))}
+            <label title="Custom color" style={boardBgStyle(bg)} className={`relative flex h-8 w-10 cursor-pointer items-center justify-center rounded-md border border-dashed border-border ring-offset-2 ring-offset-background ${isCustomColor(bg) ? "ring-2 ring-ring" : ""}`}>
+              <Palette className="h-4 w-4" />
+              <input type="color" aria-label="Custom color" value={isCustomColor(bg) ? bg : "#1e3a5f"} onChange={(e) => setBg(e.target.value)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+            </label>
           </div>
           {!board && (
             <Select value={type} onValueChange={(v) => setType(v as "youtube")}>

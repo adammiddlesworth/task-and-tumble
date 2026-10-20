@@ -11,6 +11,11 @@ export type YoutubeDetails = Tables<"youtube_details">;
 export type ClaudeStatus = "off" | "queued" | "working" | "ready_for_review" | "failed";
 
 export const BOARD_COLORS = ["forest", "crimson", "teal", "ocean", "amber", "plum", "slate"] as const;
+
+/** Custom board colors are stored as "#rrggbb"; named presets are styled via CSS. */
+export const isCustomColor = (bg?: string | null): bg is string => !!bg && /^#[0-9a-f]{6}$/i.test(bg);
+export const boardBgStyle = (bg?: string | null): { backgroundColor?: string } =>
+  isCustomColor(bg) ? { backgroundColor: bg } : {};
 export const LABEL_COLORS = ["green", "yellow", "orange", "red", "purple", "blue"] as const;
 export const DAY_LISTS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekend"];
 
