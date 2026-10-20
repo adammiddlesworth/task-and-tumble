@@ -669,6 +669,10 @@ export type Database = {
     }
     Functions: {
       accept_board_invite: { Args: { _token: string }; Returns: string }
+      add_card_label: {
+        Args: { _card_id: string; _color: string; _name: string }
+        Returns: string
+      }
       archive_completed: { Args: { _board_id: string }; Returns: number }
       board_people: {
         Args: { _board_id: string }
