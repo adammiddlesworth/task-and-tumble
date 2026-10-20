@@ -2,23 +2,31 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { Bot, CheckSquare, Target, CheckCircle2, PanelsTopLeft } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { DueBadge, StatusPill } from "@/components/badges";
 import { Checkbox } from "@/components/ui/checkbox";
 import { labelStyle, updateCard, type Card, type Label } from "@/lib/data";
 import { CardQuickEdit } from "@/components/card/CardQuickEdit";
 
+export type ChecklistItem = { id: string; text: string; is_done: boolean };
+
 type Props = {
   card: Card;
   labels: Label[];
   checklist?: { done: number; total: number } | undefined;
+  checklistItems?: ChecklistItem[] | undefined;
   goalCount?: number | undefined;
   coverUrl?: string | undefined;
   onToggleComplete?: () => void;
+  onToggleChecklistItem?: ((itemId: string, done: boolean) => void) | undefined;
 };
 
-export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onToggleComplete }: Props) {
+export function CardFaceView({ card, labels, checklist, checklistItems, goalCount, coverUrl, onToggleComplete, onToggleChecklistItem }: Props) {
+  const [expanded, setExpanded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   return (
     <div className="space-y-1.5">
       {coverUrl && (
