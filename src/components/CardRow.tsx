@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { DueBadge, StatusPill } from "@/components/badges";
-import type { Card } from "@/lib/data";
+import { boardBgStyle, type Card } from "@/lib/data";
 import { CardQuickEdit } from "@/components/card/CardQuickEdit";
 
 export type CardWithBoard = Card & { boards: { title: string; background: string } | null; lists: { title: string } | null };

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { searchQuery } from "@/lib/data";
+import { boardBgStyle, searchQuery } from "@/lib/data";
 import { CardRow, type CardWithBoard } from "@/components/CardRow";
 
 export const Route = createFileRoute("/_authenticated/search")({
