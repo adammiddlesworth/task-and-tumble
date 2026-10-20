@@ -83,7 +83,7 @@ export function SortableCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={() => navigate({ to: "/board/$boardId/card/$cardId", params: { boardId: props.card.board_id, cardId: props.card.id } })}
-      className={`group cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:bg-muted/40 hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
+      className={`group cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-all hover:bg-card-hover hover:shadow-lift hover:ring-1 hover:ring-card-hover-border ${isDragging ? "opacity-40" : ""}`}
     >
       <CardFaceView {...props} onToggleComplete={toggleComplete} />
     </div>
