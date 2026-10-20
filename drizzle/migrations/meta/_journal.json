@@ -29,6 +29,13 @@
       "when": 1792452888838,
       "tag": "0003_board_background_image",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792496112358,
+      "tag": "0004_list_collapsed",
+      "breakpoints": true
     }
   ]
 }

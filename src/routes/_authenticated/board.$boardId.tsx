@@ -177,6 +177,12 @@ function BoardPage() {
     await supabase.from("lists").update({ title: t }).eq("id", list.id);
   }
 
+  async function toggleCollapse(list: List) {
+    const v = !list.collapsed;
+    qc.setQueryData<BoardData>(key, (d) => (d ? { ...d, lists: d.lists.map((l) => (l.id === list.id ? { ...l, collapsed: v } : l)) } : d));
+    await supabase.from("lists").update({ collapsed: v }).eq("id", list.id);
+  }
+
   async function archiveList(list: List) {
     qc.setQueryData<BoardData>(key, (d) => (d ? { ...d, lists: d.lists.filter((l) => l.id !== list.id) } : d));
     await supabase.from("lists").update({ archived: true }).eq("id", list.id);
@@ -283,6 +289,7 @@ function BoardPage() {
                   goalCounts={goalCounts}
                   onRename={(t) => renameList(list, t)}
                   onArchive={() => archiveList(list)}
+                  onToggleCollapse={() => toggleCollapse(list)}
                   onAddCard={(t) => addCard(list, t)}
                 />
               );
