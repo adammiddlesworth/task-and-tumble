@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Pencil, Plus, Tag, Trash2 } from "lucide-react";
+import { Check, PenLine, Pencil, Plus, Tag, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { LABEL_COLORS, type Label } from "@/lib/data";
+import { LABEL_COLORS, isCustomColor, labelStyle, type Label } from "@/lib/data";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +54,7 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
           <div className="space-y-1.5">
             {labels.map((l) => (
               <div key={l.id} className="flex items-center gap-1.5">
-                <button type="button" data-label={l.color} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-[oklch(0.99_0_0)] transition hover:opacity-90">
+                <button type="button" data-label={l.color} style={labelStyle(l.color)} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-[oklch(0.99_0_0)] transition hover:opacity-90">
                   {l.name}
                   {selected.includes(l.id) && <Check className="h-4 w-4" />}
                 </button>

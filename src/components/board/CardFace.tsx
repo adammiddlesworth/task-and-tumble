@@ -6,7 +6,7 @@ import { Bot, CheckSquare, Target, CheckCircle2, PanelsTopLeft } from "lucide-re
 import { toast } from "sonner";
 import { DueBadge, StatusPill } from "@/components/badges";
 import { Checkbox } from "@/components/ui/checkbox";
-import { updateCard, type Card, type Label } from "@/lib/data";
+import { labelStyle, updateCard, type Card, type Label } from "@/lib/data";
 import { CardQuickEdit } from "@/components/card/CardQuickEdit";
 
 type Props = {

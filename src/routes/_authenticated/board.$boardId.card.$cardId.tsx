@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { Archive, Target, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { boardQuery, cardQuery, logActivity, updateCard, type BoardData } from "@/lib/data";
+import { boardQuery, cardQuery, labelStyle, logActivity, updateCard, type BoardData } from "@/lib/data";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
