@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { reviewQuery } from "@/lib/data";
 import { BoardSwitcher, rememberRecentBoard } from "@/components/board/BoardSwitcher";
 import { Input } from "@/components/ui/input";
+import { PomodoroTimer } from "@/components/PomodoroTimer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -150,6 +151,7 @@ export function AppShell() {
         <Outlet />
       </main>
       <BoardSwitcher currentBoardId={currentBoardId} />
+      <PomodoroTimer />
     </div>
   );
 }
