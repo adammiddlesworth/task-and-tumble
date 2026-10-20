@@ -67,11 +67,15 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onT
 }
 
 export function SortableCard(props: Props) {
+  const qc = useQueryClient();
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.card.id,
     data: { type: "card", listId: props.card.list_id },
   });
+  const toggleComplete = () => {
+    updateCard(qc, props.card, { is_complete: !props.card.is_complete }).catch((e) => toast.error(e.message));
+  };
   return (
     <div
       ref={setNodeRef}
@@ -79,9 +83,9 @@ export function SortableCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={() => navigate({ to: "/board/$boardId/card/$cardId", params: { boardId: props.card.board_id, cardId: props.card.id } })}
-      className={`cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
+      className={`group cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:bg-muted/40 hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
     >
-      <CardFaceView {...props} />
+      <CardFaceView {...props} onToggleComplete={toggleComplete} />
     </div>
   );
 }
