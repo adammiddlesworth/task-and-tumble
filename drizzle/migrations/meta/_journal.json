@@ -78,6 +78,13 @@
       "when": 1792501109345,
       "tag": "0010_secure_shared_label_creation_and_placement_ids",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792504939277,
+      "tag": "0011_more_label_colors",
+      "breakpoints": true
     }
   ]
 }

@@ -96,6 +96,11 @@
   --label-red: oklch(0.6 0.21 27);
   --label-purple: oklch(0.58 0.18 300);
   --label-blue: oklch(0.6 0.15 250);
+  --label-sky: oklch(0.72 0.12 225);
+  --label-lime: oklch(0.78 0.18 128);
+  --label-pink: oklch(0.7 0.17 350);
+  --label-teal: oklch(0.65 0.11 190);
+  --label-black: oklch(0.35 0.02 260);
 
   --board-forest: oklch(0.42 0.08 155);
   --board-crimson: oklch(0.45 0.15 22);
@@ -166,6 +171,11 @@
   [data-label="red"] { background-color: var(--label-red); }
   [data-label="purple"] { background-color: var(--label-purple); }
   [data-label="blue"] { background-color: var(--label-blue); }
+  [data-label="sky"] { background-color: var(--label-sky); }
+  [data-label="lime"] { background-color: var(--label-lime); }
+  [data-label="pink"] { background-color: var(--label-pink); }
+  [data-label="teal"] { background-color: var(--label-teal); }
+  [data-label="black"] { background-color: var(--label-black); }
 
   [data-due="upcoming"] { background-color: var(--due-upcoming); color: var(--due-upcoming-fg); }
   [data-due="soon"] { background-color: var(--due-soon); color: var(--due-soon-fg); }

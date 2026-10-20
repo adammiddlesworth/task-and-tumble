@@ -36,9 +36,9 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
         {edit ? (
           <div className="space-y-3">
             <Input autoFocus value={edit.name ?? ""} onChange={(e) => setEdit({ ...edit, name: e.target.value })} placeholder="Label name" />
-            <div className="flex gap-1.5">
+            <div className="grid grid-cols-6 gap-1.5">
               {LABEL_COLORS.map((c) => (
-                <Button key={c} data-label={c} onClick={() => setEdit({ ...edit, color: c })} className={`h-7 flex-1 rounded ${edit.color === c ? "ring-2 ring-ring ring-offset-1" : ""}`} aria-label={c} />
+                <button type="button" key={c} data-label={c} onClick={() => setEdit({ ...edit, color: c })} className={`h-7 rounded ${edit.color === c ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`} aria-label={c} title={c} />
               ))}
             </div>
             <div className="flex gap-2">
@@ -54,10 +54,10 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
           <div className="space-y-1.5">
             {labels.map((l) => (
               <div key={l.id} className="flex items-center gap-1.5">
-                <Button data-label={l.color} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-primary-foreground">
+                <button type="button" data-label={l.color} onClick={() => toggle(l.id)} className="flex h-8 flex-1 items-center justify-between rounded px-2 text-left text-sm font-medium text-[oklch(0.99_0_0)] transition hover:opacity-90">
                   {l.name}
                   {selected.includes(l.id) && <Check className="h-4 w-4" />}
-                </Button>
+                </button>
                 <Button variant="ghost" size="icon" onClick={() => setEdit(l)} className="h-7 w-7 text-muted-foreground" aria-label="Edit label"><Pencil className="h-3.5 w-3.5" /></Button>
               </div>
             ))}
