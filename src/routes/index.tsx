@@ -2,14 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Bot, LayoutGrid, CalendarClock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import kommandLogoDark from "@/assets/kommand_logo_dark.png.asset.json";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Command Center — Personal kanban with Claude" },
+      { title: "Kommand — Personal kanban with Claude" },
       { name: "description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
-      { property: "og:title", content: "Command Center — Personal kanban with Claude" },
+      { property: "og:title", content: "Kommand — Personal kanban with Claude" },
       { property: "og:description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -33,8 +34,8 @@ function Landing() {
   return (
     <main className="min-h-screen bg-nav text-nav-foreground">
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 py-16">
-        <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-nav-foreground/15 px-3 py-1 text-xs tracking-wide text-nav-foreground/70">
-          <span className="h-2 w-2 rounded-full bg-primary" /> Command Center
+        <div className="mb-6">
+          <img src={kommandLogoDark.url} alt="Kommand" className="h-10 w-auto" />
         </div>
         <h1 className="max-w-3xl text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl">
           Your week, your channels, <span className="text-primary">one board.</span>

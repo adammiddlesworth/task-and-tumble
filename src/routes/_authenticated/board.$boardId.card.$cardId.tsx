@@ -25,10 +25,10 @@ import { CardComments } from "@/components/card/CardComments";
 export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardId")({
   head: () => ({
     meta: [
-      { title: "Card — Command Center" },
-      { name: "description", content: "Card details in Command Center." },
-      { property: "og:title", content: "Card — Command Center" },
-      { property: "og:description", content: "Card details in Command Center." },
+      { title: "Card — Kommand" },
+      { name: "description", content: "Card details in Kommand." },
+      { property: "og:title", content: "Card — Kommand" },
+      { property: "og:description", content: "Card details in Kommand." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

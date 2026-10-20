@@ -7,9 +7,9 @@ import { CardRow, type CardWithBoard } from "@/components/CardRow";
 export const Route = createFileRoute("/_authenticated/due-soon")({
   head: () => ({
     meta: [
-      { title: "Due Soon — Command Center" },
+      { title: "Due Soon — Kommand" },
       { name: "description", content: "Everything due in the next 7 days across all boards." },
-      { property: "og:title", content: "Due Soon — Command Center" },
+      { property: "og:title", content: "Due Soon — Kommand" },
       { property: "og:description", content: "Everything due in the next 7 days across all boards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

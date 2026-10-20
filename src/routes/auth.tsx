@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import kommandLogoDark from "@/assets/kommand_logo_dark.png.asset.json";
+import kommandLogoLight from "@/assets/kommand_logo_light.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,10 +12,10 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Command Center" },
-      { name: "description", content: "Sign in to your Command Center boards." },
-      { property: "og:title", content: "Sign in — Command Center" },
-      { property: "og:description", content: "Sign in to your Command Center boards." },
+      { title: "Sign in — Kommand" },
+      { name: "description", content: "Sign in to your Kommand boards." },
+      { property: "og:title", content: "Sign in — Kommand" },
+      { property: "og:description", content: "Sign in to your Kommand boards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -74,9 +76,9 @@ function AuthPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-nav px-4">
       <div className="w-full max-w-sm rounded-2xl bg-card p-8 shadow-lift">
-        <div className="mb-6 flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary font-display font-extrabold text-primary-foreground">C</span>
-          <span className="font-display text-lg font-bold">Command Center</span>
+        <div className="mb-6">
+          <img src={kommandLogoLight.url} alt="Kommand" className="h-9 w-auto dark:hidden" />
+          <img src={kommandLogoDark.url} alt="Kommand" className="hidden h-9 w-auto dark:block" />
         </div>
         {sent ? (
           <p className="text-sm text-muted-foreground">Check your email to confirm your account, then come back and sign in.</p>
