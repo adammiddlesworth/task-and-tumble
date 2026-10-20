@@ -99,6 +99,13 @@
       "when": 1792506053227,
       "tag": "0013_card_comments",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792506518359,
+      "tag": "0014_power_list_only_onboarding",
+      "breakpoints": true
     }
   ]
 }

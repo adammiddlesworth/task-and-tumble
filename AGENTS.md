@@ -20,3 +20,4 @@
 - Cover objects are retained on replacement/removal because independent copies may still reference them.
 - Signed image URLs are cached per storage path in the session-scoped QueryClient until before expiry, so routine board refreshes do not reload unchanged backgrounds or covers; clearing the client on sign-out also clears these URLs.
 - Comments reference canonical card IDs and use database-assigned authors with author-only edit/delete policies, so mirrors share discussions without permitting impersonation.
+- Starter-board regression tests execute the applied SQL in isolated PGlite databases, so onboarding rules are verified without creating real accounts or touching existing user data.
