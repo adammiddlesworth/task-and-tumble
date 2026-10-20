@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-route
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Bot, CalendarClock, LayoutGrid, LogOut, Moon, Search, Sun } from "lucide-react";
+import kommandLogoDark from "@/assets/kommand_logo_dark.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { reviewQuery } from "@/lib/data";
 import { BoardSwitcher, rememberRecentBoard } from "@/components/board/BoardSwitcher";
@@ -87,9 +88,8 @@ export function AppShell() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex h-12 shrink-0 items-center gap-1 bg-nav px-3 text-nav-foreground">
-        <Link to="/boards" className="mr-2 flex items-center gap-2">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-primary font-display text-sm font-extrabold text-primary-foreground">C</span>
-          <span className="hidden font-display font-bold sm:inline">Command Center</span>
+        <Link to="/boards" className="mr-2 flex items-center">
+          <img src={kommandLogoDark.url} alt="Kommand" className="h-7 w-auto" />
         </Link>
         <Link to="/boards" className={`${navLink} ${path === "/boards" ? active : ""}`}>
           <LayoutGrid className="h-4 w-4" /> <span className="hidden md:inline">Boards</span>
