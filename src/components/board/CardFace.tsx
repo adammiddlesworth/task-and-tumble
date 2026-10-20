@@ -1,9 +1,12 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Bot, CheckSquare, Target, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import { DueBadge, StatusPill } from "@/components/badges";
-import type { Card, Label } from "@/lib/data";
+import { Checkbox } from "@/components/ui/checkbox";
+import { updateCard, type Card, type Label } from "@/lib/data";
 
 type Props = {
   card: Card;
@@ -11,9 +14,10 @@ type Props = {
   checklist?: { done: number; total: number } | undefined;
   goalCount?: number | undefined;
   coverUrl?: string | undefined;
+  onToggleComplete?: () => void;
 };
 
-export function CardFaceView({ card, labels, checklist, goalCount, coverUrl }: Props) {
+export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onToggleComplete }: Props) {
   return (
     <div className="space-y-1.5">
       {coverUrl && (
