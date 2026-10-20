@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
+- YouTube calendars read date-only target publish dates by canonical card ID; label filters use placement label mappings so mirrors remain synchronized.
 - The Pomodoro timer is mounted in AppShell with deadline-based local state, so board navigation and delayed browser ticks do not reset or drift the countdown.
 - Data access uses browser Supabase with `can_access_board()` and `can_access_card()` RLS; owners alone manage invitations and cross-board sharing, while board members edit content.
 - Ordering uses float `position` columns (`positionBetween`) so a drag updates exactly one row.

@@ -21,6 +21,7 @@ export function YoutubeFields({ cardId, details }: { cardId: string; details: Yo
     const { error } = await supabase.from("youtube_details").upsert({ card_id: cardId, ...f, ...patch });
     if (error) toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["card", cardId] });
+    if (!error) qc.invalidateQueries({ queryKey: ["board"] });
   }
 
   const text = (key: keyof Fields, label: string, multi = false) => (

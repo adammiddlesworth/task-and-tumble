@@ -46,6 +46,7 @@ export type BoardData = {
   cardLabels: { card_id: string; label_id: string }[];
   checklistStats: Record<string, { done: number; total: number }>;
   checklistItems: Record<string, { id: string; text: string; is_done: boolean }[]>;
+  publishDates: Record<string, string | null>;
   coverUrls: Record<string, string>;
 };
 
@@ -117,6 +118,10 @@ export const boardQuery = (boardId: string) =>
       }
       const cardRows = [...check(cards), ...mirroredCards].sort((a, b) => a.position - b.position);
       const boardRow = check(board);
+      const canonicalIds = [...new Set(cardRows.map(canonicalCardId))];
+      const publishRows = boardRow.board_type === "youtube" && canonicalIds.length
+        ? check(await supabase.from("youtube_details").select("card_id,publish_date").in("card_id", canonicalIds)) : [];
+      const publishDates = Object.fromEntries(publishRows.map((row) => [row.card_id, row.publish_date]));
       const coverUrls = await signCovers([...cardRows.map((c) => c.cover_url ?? ""), boardRow.background_image ?? ""], client);
       return {
         coverUrls,
@@ -127,6 +132,7 @@ export const boardQuery = (boardId: string) =>
         cardLabels: [...(check(cl) ?? []).map((r) => ({ card_id: r.card_id, label_id: r.label_id })), ...mirrors.flatMap((m) => mirrorLabels.filter((r) => r.card_id === m.card_id).map((r) => ({ card_id: m.id, label_id: r.label_id })))],
         checklistStats,
         checklistItems,
+        publishDates,
       };
     },
   });
