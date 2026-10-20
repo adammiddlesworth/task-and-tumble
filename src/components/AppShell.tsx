@@ -99,6 +99,15 @@ export function AppShell() {
             />
           </div>
         </form>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          title={dark ? "Light mode" : "Dark mode"}
+          className="ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-md text-nav-foreground/80 transition hover:bg-nav-foreground/10 hover:text-nav-foreground"
+        >
+          {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
         <DropdownMenu>
           <DropdownMenuTrigger className="ml-2 grid h-8 w-8 place-items-center rounded-full bg-primary text-sm font-bold uppercase text-primary-foreground">
             {email.charAt(0) || "?"}
