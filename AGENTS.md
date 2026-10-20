@@ -19,3 +19,4 @@
 - Invitations are email-bound, expiring links accepted only by matching verified accounts; no automatic email delivery is implied.
 - Cover objects are retained on replacement/removal because independent copies may still reference them.
 - Signed image URLs are cached per storage path in the session-scoped QueryClient until before expiry, so routine board refreshes do not reload unchanged backgrounds or covers; clearing the client on sign-out also clears these URLs.
+- Comments reference canonical card IDs and use database-assigned authors with author-only edit/delete policies, so mirrors share discussions without permitting impersonation.
