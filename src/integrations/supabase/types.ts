@@ -160,6 +160,51 @@ export type Database = {
           },
         ]
       }
+      card_comments: {
+        Row: {
+          author_id: string
+          author_name: string
+          body: string
+          card_id: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string
+          author_name?: string
+          body: string
+          card_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          body?: string
+          card_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_comments_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_comments_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "claude_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_labels: {
         Row: {
           card_id: string

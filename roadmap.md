@@ -8,3 +8,6 @@
 
 # Board switching
 - [x] Floating "Switch boards" button at the bottom right opening search, starred, recent and all boards; verified on desktop and phone widths.
+
+# Card comments
+- [ ] Add persistent comments with author/time, shared across mirrors, and author-only edit/delete; verify signed-in posting and read-back.
