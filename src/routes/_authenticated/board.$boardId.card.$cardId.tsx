@@ -18,6 +18,8 @@ import { YoutubeFields } from "@/components/card/YoutubeFields";
 import { Checklists } from "@/components/card/Checklists";
 import { LabelPicker } from "@/components/card/LabelPicker";
 import { CoverBanner, CoverButton } from "@/components/card/CoverImage";
+import { CardMembers } from "@/components/card/Members";
+import { archivePlacement } from "@/lib/card-actions";
 
 export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardId")({
   head: () => ({
@@ -26,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardI
       { name: "description", content: "Card details in Command Center." },
       { property: "og:title", content: "Card — Command Center" },
       { property: "og:description", content: "Card details in Command Center." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CardModal,
@@ -45,17 +49,20 @@ function CardModal() {
 
   if (!data || !board) return null;
   const card = data.card;
-  const list = board.lists.find((l) => l.id === card.list_id);
+  const list = board.lists.find((l) => l.id === data.placement.list_id);
   const save = (patch: Parameters<typeof updateCard>[2]) => updateCard(qc, card, patch).catch((e) => toast.error(e.message));
   const isPower = board.board.board_type === "power_list";
   const goalsList = board.lists.find((l) => l.title.toLowerCase().includes("goals"));
   const isGoal = goalsList && card.list_id === goalsList.id;
   const goalCards = goalsList ? board.cards.filter((c) => c.list_id === goalsList.id) : [];
   const linked = board.cards.filter((c) => c.goal_card_id === card.id);
+  const placement = data.placement;
+  const sourceLabels = board.labels.filter((l) => l.board_id === card.board_id);
 
   async function remove() {
     if (!confirm("Delete this card permanently?")) return;
-    await supabase.from("cards").delete().eq("id", card.id);
+    const { error } = await supabase.from(placement.id !== card.id ? "card_mirrors" : "cards").delete().eq("id", placement.id);
+    if (error) { toast.error(error.message); return; }
     qc.setQueryData<BoardData>(["board", boardId], (d) => (d ? { ...d, cards: d.cards.filter((c) => c.id !== card.id) } : d));
     close();
   }
@@ -86,7 +93,7 @@ function CardModal() {
 
           <div className="ml-8 flex flex-wrap items-center gap-2">
             <CoverButton card={card} />
-            <LabelPicker cardId={card.id} boardId={boardId} labels={board.labels} selected={data.labelIds} />
+            <LabelPicker cardId={card.id} boardId={card.board_id} labels={sourceLabels} selected={data.labelIds} />
             <DueDatePopover
               startDate={card.start_date}
               dueDate={card.due_date}
@@ -126,6 +133,7 @@ function CardModal() {
           </div>
 
           <div className="ml-8"><Checklists cardId={card.id} boardId={boardId} checklists={data.checklists} /></div>
+          <div className="ml-8 space-y-2"><h3 className="text-sm font-semibold">Members</h3><CardMembers cardId={card.id} /></div>
 
           {board.board.board_type === "youtube" && (
             <div className="ml-8"><YoutubeFields cardId={card.id} details={data.youtube} /></div>
@@ -145,7 +153,7 @@ function CardModal() {
           )}
 
           <div className="ml-8 flex gap-2 border-t pt-4">
-            <Button size="sm" variant="secondary" onClick={() => { save({ archived: true }); qc.setQueryData<BoardData>(["board", boardId], (d) => d ? { ...d, cards: d.cards.filter((c) => c.id !== card.id) } : d); close(); toast.success("Card archived"); }}>
+            <Button size="sm" variant="secondary" onClick={async () => { try { await archivePlacement(placement); await qc.invalidateQueries(); close(); toast.success("Card archived"); } catch (e) { toast.error(e instanceof Error ? e.message : "Could not archive card"); } }}>
               <Archive className="mr-1 h-4 w-4" /> Archive
             </Button>
             <Button size="sm" variant="ghost" className="text-destructive" onClick={remove}>

@@ -10,7 +10,11 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
-- Data access uses the browser Supabase client with owner-only RLS (via `owns_board()`); query options live in `src/lib/data.ts` so caches stay consistent.
+- Data access uses browser Supabase with `can_access_board()` and `can_access_card()` RLS; owners alone manage invitations and cross-board sharing, while board members edit content.
 - Ordering uses float `position` columns (`positionBetween`) so a drag updates exactly one row.
 - Multi-row board operations (seeding, weekly reset, archive completed) are Postgres functions so they run atomically.
 - Card detail is a child route of the board route rendering a dialog, so the URL reflects the open card.
+- Mirrors store only placements and reference canonical cards; reads merge shared content, while content edits target canonical IDs and location/archive actions target placement IDs.
+- Move/copy/mirror operations use the atomic `card_destination` RPC; copies duplicate checklist rows and map labels to the destination board.
+- Invitations are email-bound, expiring links accepted only by matching verified accounts; no automatic email delivery is implied.
+- Cover objects are retained on replacement/removal because independent copies may still reference them.

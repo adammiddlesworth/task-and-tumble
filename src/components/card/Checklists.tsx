@@ -14,8 +14,8 @@ type CL = Tables<"checklists"> & { checklist_items: Tables<"checklist_items">[] 
 export function Checklists({ cardId, boardId, checklists }: { cardId: string; boardId: string; checklists: CL[] }) {
   const qc = useQueryClient();
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ["card", cardId] });
-    qc.invalidateQueries({ queryKey: ["board", boardId] });
+    qc.invalidateQueries({ queryKey: ["card"] });
+    qc.invalidateQueries({ queryKey: ["board"] });
   };
 
   async function addChecklist() {

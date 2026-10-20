@@ -19,6 +19,8 @@ export const Route = createFileRoute("/_authenticated/boards")({
       { name: "description", content: "All your Command Center boards." },
       { property: "og:title", content: "Boards — Command Center" },
       { property: "og:description", content: "All your Command Center boards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(boardsQuery()),

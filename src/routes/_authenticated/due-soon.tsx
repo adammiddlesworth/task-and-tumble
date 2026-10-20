@@ -11,6 +11,8 @@ export const Route = createFileRoute("/_authenticated/due-soon")({
       { name: "description", content: "Everything due in the next 7 days across all boards." },
       { property: "og:title", content: "Due Soon — Command Center" },
       { property: "og:description", content: "Everything due in the next 7 days across all boards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(dueSoonQuery()),
@@ -27,7 +29,8 @@ function DueSoonPage() {
   const { data } = useSuspenseQuery(dueSoonQuery());
   const groups = new Map<string, CardWithBoard[]>();
   for (const c of data as CardWithBoard[]) {
-    const k = format(new Date(c.due_date!), "yyyy-MM-dd");
+    if (!c.due_date) continue;
+    const k = format(new Date(c.due_date), "yyyy-MM-dd");
     groups.set(k, [...(groups.get(k) ?? []), c]);
   }
   return (

@@ -11,6 +11,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
       { property: "og:title", content: "Command Center — Personal kanban with Claude" },
       { property: "og:description", content: "Plan your week and your YouTube pipeline on kanban boards that Claude can work on." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Landing,
@@ -20,7 +22,11 @@ function Landing() {
   const navigate = useNavigate();
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/boards", replace: true });
+      if (data.session) {
+        const token = sessionStorage.getItem("cc-invite");
+        if (token) { sessionStorage.removeItem("cc-invite"); navigate({ to: "/invite", search: { token }, replace: true }); }
+        else navigate({ to: "/boards", replace: true });
+      }
     });
   }, [navigate]);
 

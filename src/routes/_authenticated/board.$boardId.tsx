@@ -22,6 +22,7 @@ import { boardQuery, type BoardData, type Card, type List } from "@/lib/data";
 import { positionBetween } from "@/lib/position";
 import { ListColumn } from "@/components/board/ListColumn";
 import { BackgroundPicker } from "@/components/board/BackgroundPicker";
+import { BoardMembers } from "@/components/card/Members";
 import { CardFaceView } from "@/components/board/CardFace";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,8 @@ export const Route = createFileRoute("/_authenticated/board/$boardId")({
       { name: "description", content: "Kanban board in Command Center." },
       { property: "og:title", content: "Board — Command Center" },
       { property: "og:description", content: "Kanban board in Command Center." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context, params }) => context.queryClient.ensureQueryData(boardQuery(params.boardId)),
@@ -128,7 +131,8 @@ function BoardPage() {
 
     if (a.startsWith("list:")) {
       if (!o.startsWith("list:") && !containerOf(o)) return;
-      const targetList = o.startsWith("list:") ? o.slice(5) : containerOf(o)!;
+      const targetList = o.startsWith("list:") ? o.slice(5) : containerOf(o);
+      if (!targetList) return;
       const listId = a.slice(5);
       const oldIdx = listOrder.indexOf(listId);
       const newIdx = listOrder.indexOf(targetList);
@@ -165,7 +169,7 @@ function BoardPage() {
     qc.setQueryData<BoardData>(key, (d) =>
       d ? { ...d, cards: d.cards.map((c) => (c.id === a ? { ...c, list_id: to, position: pos } : c)) } : d,
     );
-    const { error } = await supabase.from("cards").update({ list_id: to, position: pos }).eq("id", a);
+    const { error } = await supabase.from(card.sourceCardId ? "card_mirrors" : "cards").update({ list_id: to, position: pos }).eq("id", a);
     if (error) {
       toast.error("Couldn't save card move");
       qc.invalidateQueries({ queryKey: key });
@@ -260,6 +264,7 @@ function BoardPage() {
         </button>
         <div className="ml-auto flex flex-wrap gap-2">
           <BackgroundPicker board={data.board} />
+          <BoardMembers boardId={boardId} ownerId={data.board.owner_id} />
         {isPower && (
           <>
             <button onClick={() => setConfirmReset(true)} className="board-ghost flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium">

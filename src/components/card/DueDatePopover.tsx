@@ -50,7 +50,7 @@ export function DueDatePopover({ startDate, dueDate, onSave }: Props) {
   );
 }
 
-function DatesForm({ start, due, onSave }: { start: Date | null; due: Date | null; onSave: (p: DatesPatch) => void }) {
+export function DatesForm({ start, due, onSave }: { start: Date | null; due: Date | null; onSave: (p: DatesPatch) => void }) {
   const [startDate, setStartDate] = useState<Date | null>(start);
   const [hasStart, setHasStart] = useState(!!start);
   const [dueDate, setDueDate] = useState<Date | null>(due);
