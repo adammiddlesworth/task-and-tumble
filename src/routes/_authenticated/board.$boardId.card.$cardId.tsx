@@ -9,7 +9,7 @@ import { boardQuery, cardQuery, logActivity, updateCard, type BoardData } from "
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { DueDatePopover } from "@/components/card/DueDatePopover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DueBadge } from "@/components/badges";
 import { MarkdownField } from "@/components/Markdown";
@@ -31,9 +31,6 @@ export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardI
   component: CardModal,
 });
 
-function toLocalInput(iso: string | null) {
-  return iso ? format(new Date(iso), "yyyy-MM-dd'T'HH:mm") : "";
-}
 
 function CardModal() {
   const { boardId, cardId } = Route.useParams();
@@ -90,11 +87,13 @@ function CardModal() {
           <div className="ml-8 flex flex-wrap items-center gap-2">
             <CoverButton card={card} />
             <LabelPicker cardId={card.id} boardId={boardId} labels={board.labels} selected={data.labelIds} />
-            <Input
-              type="datetime-local"
-              value={toLocalInput(card.due_date)}
-              onChange={(e) => save({ due_date: e.target.value ? new Date(e.target.value).toISOString() : null })}
-              className="h-9 w-auto"
+            <DueDatePopover
+              startDate={card.start_date}
+              dueDate={card.due_date}
+              onSave={(p) => {
+                save(p);
+                logActivity(card.id, "updated dates");
+              }}
             />
             <DueBadge due={card.due_date} complete={card.is_complete} />
             {board.labels.filter((l) => data.labelIds.includes(l.id)).map((l) => (
