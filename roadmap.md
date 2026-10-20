@@ -14,5 +14,5 @@
 - [x] Persistent comments with author/time, canonical sharing across mirrors and author-only edit/delete; 6 regression tests pass and signed-in posting, reload read-back, editing and deletion verified.
 
 # YouTube calendar
-- [ ] Calendar view using target publish dates, including mirrored cards and undated cards.
-- [ ] Label filters for YouTube board and calendar views; regression tests and signed-in verification.
+- [x] Calendar view using canonical target publish dates and undated cards; signed-in save, day placement, card opening and month navigation verified.
+- [x] Label filters for YouTube board and calendar views; signed-in filtering verified and all 43 regression tests pass.
