@@ -84,16 +84,7 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
         <Progress value={total ? (done / total) * 100 : 0} className="h-1.5" />
       </div>
       {cl.checklist_items.map((it) => (
-        <div key={it.id} className="group flex items-center gap-2 pl-1">
-          <Checkbox
-            checked={it.is_done}
-            onCheckedChange={async (v) => { await supabase.from("checklist_items").update({ is_done: !!v }).eq("id", it.id); refresh(); }}
-          />
-          <span className={`flex-1 text-sm ${it.is_done ? "text-muted-foreground line-through" : ""}`}>{it.text}</span>
-          <button onClick={async () => { await supabase.from("checklist_items").delete().eq("id", it.id); refresh(); }} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive" aria-label="Delete item">
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        <ChecklistItemRow key={it.id} item={it} refresh={refresh} />
       ))}
       <div className="flex gap-2 pl-1">
         <Input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addItem()} placeholder="Add an item" className="h-8 text-sm" />
