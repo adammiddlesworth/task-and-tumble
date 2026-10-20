@@ -1,9 +1,12 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Bot, CheckSquare, Target, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import { DueBadge, StatusPill } from "@/components/badges";
-import type { Card, Label } from "@/lib/data";
+import { Checkbox } from "@/components/ui/checkbox";
+import { updateCard, type Card, type Label } from "@/lib/data";
 
 type Props = {
   card: Card;
@@ -11,9 +14,10 @@ type Props = {
   checklist?: { done: number; total: number } | undefined;
   goalCount?: number | undefined;
   coverUrl?: string | undefined;
+  onToggleComplete?: () => void;
 };
 
-export function CardFaceView({ card, labels, checklist, goalCount, coverUrl }: Props) {
+export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onToggleComplete }: Props) {
   return (
     <div className="space-y-1.5">
       {coverUrl && (
@@ -27,7 +31,18 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl }: P
         </div>
       )}
       <div className="flex items-start gap-1.5">
-        {card.is_complete && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--due-complete)]" />}
+        {onToggleComplete ? (
+          <span
+            onPointerDown={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            className={`mt-0.5 shrink-0 ${card.is_complete ? "" : "opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"}`}
+          >
+            <Checkbox checked={card.is_complete} onCheckedChange={() => onToggleComplete()} aria-label="Mark card complete" />
+          </span>
+        ) : (
+          card.is_complete && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--due-complete)]" />
+        )}
         <p className={`text-sm leading-snug ${card.is_complete ? "text-muted-foreground line-through" : ""}`}>{card.title}</p>
       </div>
       {(card.due_date || checklist?.total || card.claude_enabled || goalCount || card.claude_status !== "off") && (
@@ -52,11 +67,15 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl }: P
 }
 
 export function SortableCard(props: Props) {
+  const qc = useQueryClient();
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.card.id,
     data: { type: "card", listId: props.card.list_id },
   });
+  const toggleComplete = () => {
+    updateCard(qc, props.card, { is_complete: !props.card.is_complete }).catch((e) => toast.error(e.message));
+  };
   return (
     <div
       ref={setNodeRef}
@@ -64,9 +83,9 @@ export function SortableCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={() => navigate({ to: "/board/$boardId/card/$cardId", params: { boardId: props.card.board_id, cardId: props.card.id } })}
-      className={`cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
+      className={`group cursor-pointer overflow-hidden rounded-lg bg-card px-3 py-2 text-card-foreground shadow-card transition-shadow hover:bg-muted/40 hover:shadow-lift ${isDragging ? "opacity-40" : ""}`}
     >
-      <CardFaceView {...props} />
+      <CardFaceView {...props} onToggleComplete={toggleComplete} />
     </div>
   );
 }
