@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeftRight, Check, Clock, Search, Star } from "lucide-react";
@@ -30,7 +30,7 @@ export function rememberRecentBoard(boardId: string) {
   }
 }
 
-export function BoardSwitcher({ currentBoardId }: { currentBoardId?: string }) {
+export function BoardSwitcher({ currentBoardId }: { currentBoardId: string | undefined }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
 
@@ -65,7 +65,7 @@ function Switcher({
 }: {
   q: string;
   setQ: (v: string) => void;
-  currentBoardId?: string;
+  currentBoardId: string | undefined;
   onPick: () => void;
 }) {
   const qc = useQueryClient();
@@ -127,7 +127,7 @@ function Switcher({
   );
 }
 
-function Section({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) {
+function Section({ title, icon, children }: { title: string; icon?: ReactNode; children: ReactNode }) {
   return (
     <div className="mb-4 last:mb-0">
       <p className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -146,7 +146,7 @@ function Grid({
   onToggleStar,
 }: {
   boards: BoardRow[];
-  currentBoardId?: string;
+  currentBoardId: string | undefined;
   onPick: () => void;
   onToggleStar: (b: BoardRow) => void;
 }) {
