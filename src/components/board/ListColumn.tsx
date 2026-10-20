@@ -1,7 +1,7 @@
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
-import { MoreHorizontal, Plus, X } from "lucide-react";
+import { ChevronsLeftRight, ChevronsRightLeft, MoreHorizontal, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -16,9 +16,10 @@ type Props = {
   onRename: (title: string) => void;
   onArchive: () => void;
   onAddCard: (title: string) => void;
+  onToggleCollapse: () => void;
 };
 
-export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive, onAddCard }: Props) {
+export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive, onAddCard, onToggleCollapse }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `list:${list.id}`,
     data: { type: "list" },
@@ -44,6 +45,24 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
     setDraft("");
   }
 
+  if (list.collapsed) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={{ transform: CSS.Transform.toString(transform), transition }}
+        {...attributes}
+        {...listeners}
+        onClick={onToggleCollapse}
+        title={`Expand "${list.title}"`}
+        className={`flex max-h-full w-10 shrink-0 cursor-pointer snap-start flex-col items-center gap-2 rounded-xl bg-panel py-2 text-panel-foreground shadow-card hover:bg-muted ${isDragging ? "opacity-50" : ""}`}
+      >
+        <ChevronsLeftRight className="h-4 w-4 text-muted-foreground" />
+        <span className="font-sans text-sm font-semibold [writing-mode:vertical-rl]">{list.title}</span>
+        <span className="text-xs text-muted-foreground">{cards.length}</span>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -66,12 +85,22 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
             {list.title} <span className="ml-1 font-normal text-muted-foreground">{cards.length}</span>
           </h3>
         )}
+        <button
+          aria-label="Collapse list"
+          title="Collapse list"
+          onClick={onToggleCollapse}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="rounded-md p-1 text-muted-foreground hover:bg-muted"
+        >
+          <ChevronsRightLeft className="h-4 w-4" />
+        </button>
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-md p-1 text-muted-foreground hover:bg-muted" onPointerDown={(e) => e.stopPropagation()}>
             <MoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => setEditing(true)}>Rename list</DropdownMenuItem>
+            <DropdownMenuItem onClick={onToggleCollapse}>Collapse list</DropdownMenuItem>
             <DropdownMenuItem onClick={onArchive}>Archive list</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
