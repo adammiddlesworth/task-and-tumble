@@ -54,8 +54,14 @@ export const COVER_BUCKET = "card-covers";
 export async function signCovers(paths: string[], client: QueryClient): Promise<Record<string, string>> {
   const unique = [...new Set(paths.filter(Boolean))];
   const entries = await Promise.all(unique.map(async (path) => {
+    const queryKey = ["signed-image", COVER_BUCKET, path];
+    const cached = client.getQueryState<string>(queryKey);
+    // Broad content invalidation must not rotate an otherwise valid image URL.
+    if (cached?.data && Date.now() - cached.dataUpdatedAt < 23 * 60 * 60 * 1000) {
+      return [path, cached.data] as const;
+    }
     const url = await client.fetchQuery({
-      queryKey: ["signed-image", COVER_BUCKET, path],
+      queryKey,
       staleTime: 23 * 60 * 60 * 1000,
       gcTime: 24 * 60 * 60 * 1000,
       retry: false,

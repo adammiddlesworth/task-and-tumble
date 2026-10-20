@@ -41,6 +41,13 @@ describe("stable signed board images", () => {
     expect(mocks.sign).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps valid image URLs when realtime or session updates invalidate all queries", async () => {
+    const original = await signCovers(["owner/background.jpg"], client);
+    await client.invalidateQueries();
+    expect(await signCovers(["owner/background.jpg"], client)).toEqual(original);
+    expect(mocks.sign).toHaveBeenCalledTimes(1);
+  });
+
   it("loads a replacement image without re-signing the existing image", async () => {
     const original = await signCovers(["owner/old.jpg"], client);
     const updated = await signCovers(["owner/old.jpg", "owner/new.jpg"], client);
