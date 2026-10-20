@@ -31,7 +31,18 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onT
         </div>
       )}
       <div className="flex items-start gap-1.5">
-        {card.is_complete && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--due-complete)]" />}
+        {onToggleComplete ? (
+          <span
+            onPointerDown={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            className={`mt-0.5 shrink-0 ${card.is_complete ? "" : "opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"}`}
+          >
+            <Checkbox checked={card.is_complete} onCheckedChange={() => onToggleComplete()} aria-label="Mark card complete" />
+          </span>
+        ) : (
+          card.is_complete && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--due-complete)]" />
+        )}
         <p className={`text-sm leading-snug ${card.is_complete ? "text-muted-foreground line-through" : ""}`}>{card.title}</p>
       </div>
       {(card.due_date || checklist?.total || card.claude_enabled || goalCount || card.claude_status !== "off") && (
