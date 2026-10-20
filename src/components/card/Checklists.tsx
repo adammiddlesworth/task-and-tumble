@@ -93,3 +93,54 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
     </div>
   );
 }
+
+function ChecklistItemRow({ item, refresh }: { item: Tables<"checklist_items">; refresh: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(item.text);
+
+  async function save() {
+    const next = text.trim();
+    setEditing(false);
+    if (!next || next === item.text) {
+      setText(item.text);
+      return;
+    }
+    await supabase.from("checklist_items").update({ text: next }).eq("id", item.id);
+    refresh();
+  }
+
+  return (
+    <div className="group flex items-center gap-2 pl-1">
+      <Checkbox
+        checked={item.is_done}
+        onCheckedChange={async (v) => { await supabase.from("checklist_items").update({ is_done: !!v }).eq("id", item.id); refresh(); }}
+      />
+      {editing ? (
+        <input
+          autoFocus
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onBlur={save}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") save();
+            if (e.key === "Escape") { setText(item.text); setEditing(false); }
+          }}
+          aria-label="Edit item"
+          className="flex-1 rounded bg-muted/60 px-1 text-sm outline-none"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => { setText(item.text); setEditing(true); }}
+          title="Click to edit"
+          className={`flex-1 rounded px-1 text-left text-sm hover:bg-muted/60 ${item.is_done ? "text-muted-foreground line-through" : ""}`}
+        >
+          {item.text}
+        </button>
+      )}
+      <button onClick={async () => { await supabase.from("checklist_items").delete().eq("id", item.id); refresh(); }} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive" aria-label="Delete item">
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
