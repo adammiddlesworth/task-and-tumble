@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteBoardButton } from "@/components/board/DeleteBoardButton";
 
 const YT_LISTS = ["Ideas", "Researching", "Scripting", "Ready to Film", "Editing", "Title & Thumbnail", "Scheduled", "Published"];
 
@@ -118,6 +119,13 @@ function BoardDialog({ board, maxPos, onClose }: { board: Board | null; maxPos: 
             </Select>
           )}
           <Button className="w-full" onClick={save}>Save</Button>
+          {board && (
+            <DeleteBoardButton
+              board={board}
+              onDeleted={onClose}
+              className="flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>

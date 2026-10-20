@@ -22,6 +22,7 @@ import { boardQuery, type BoardData, type Card, type List } from "@/lib/data";
 import { positionBetween } from "@/lib/position";
 import { ListColumn } from "@/components/board/ListColumn";
 import { BackgroundPicker } from "@/components/board/BackgroundPicker";
+import { DeleteBoardButton } from "@/components/board/DeleteBoardButton";
 import { BoardMembers } from "@/components/card/Members";
 import { CardFaceView } from "@/components/board/CardFace";
 import { Button } from "@/components/ui/button";
@@ -275,6 +276,7 @@ function BoardPage() {
             </button>
           </>
         )}
+          <DeleteBoardButton board={data.board} className="board-ghost flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium" />
         </div>
       </div>
 
