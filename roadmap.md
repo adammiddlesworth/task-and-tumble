@@ -5,3 +5,6 @@
 - [x] Board invitation links and card member assignment.
 - [x] Signed-in owner checks: move/copy/mirror, labels/dates/checklists, assignments, archive, invitation acceptance and wrong-email/forged-owner rejection; 17 tests pass.
 - [ ] Verify collaboration as a second invited account; blocked on a second user's signed-in session.
+
+# Board switching
+- [x] Floating "Switch boards" button at the bottom right opening search, starred, recent and all boards; verified on desktop and phone widths.
