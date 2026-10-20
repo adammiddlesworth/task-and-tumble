@@ -30,10 +30,10 @@ function check<T>(res: { data: T; error: { message: string } | null }): NonNulla
 export const boardsQuery = () =>
   queryOptions({
     queryKey: ["boards"],
-    queryFn: async () => {
+    queryFn: async ({ client }) => {
       await supabase.rpc("seed_default_boards");
       const rows = check(await supabase.from("boards").select("*").order("position"));
-      const urls = await signCovers(rows.map((b) => b.background_image ?? ""));
+      const urls = await signCovers(rows.map((b) => b.background_image ?? ""), client);
       return rows.map((b) => ({ ...b, bgUrl: b.background_image ? urls[b.background_image] ?? null : null }));
     },
   });
@@ -50,20 +50,31 @@ export type BoardData = {
 
 export const COVER_BUCKET = "card-covers";
 
-/** Sign many cover paths at once; returns path -> url. */
-export async function signCovers(paths: string[]): Promise<Record<string, string>> {
+/** Keep unchanged image URLs stable across board refreshes, scoped to the query client/session. */
+export async function signCovers(paths: string[], client: QueryClient): Promise<Record<string, string>> {
   const unique = [...new Set(paths.filter(Boolean))];
-  if (!unique.length) return {};
-  const { data } = await supabase.storage.from(COVER_BUCKET).createSignedUrls(unique, 60 * 60 * 24);
-  const out: Record<string, string> = {};
-  for (const d of data ?? []) if (d.path && d.signedUrl) out[d.path] = d.signedUrl;
-  return out;
+  const entries = await Promise.all(unique.map(async (path) => {
+    const url = await client.fetchQuery({
+      queryKey: ["signed-image", COVER_BUCKET, path],
+      staleTime: 23 * 60 * 60 * 1000,
+      gcTime: 24 * 60 * 60 * 1000,
+      retry: false,
+      queryFn: async () => {
+        const { data, error } = await supabase.storage.from(COVER_BUCKET).createSignedUrls([path], 60 * 60 * 24);
+        const signedUrl = data?.[0]?.signedUrl;
+        if (error || !signedUrl) throw new Error(error?.message ?? "Unable to load image");
+        return signedUrl;
+      },
+    });
+    return [path, url] as const;
+  }));
+  return Object.fromEntries(entries);
 }
 
 export const boardQuery = (boardId: string) =>
   queryOptions({
     queryKey: ["board", boardId],
-    queryFn: async (): Promise<BoardData> => {
+    queryFn: async ({ client }): Promise<BoardData> => {
       const [board, lists, cards, labels, cl, checklists] = await Promise.all([
         supabase.from("boards").select("*").eq("id", boardId).single(),
         supabase.from("lists").select("*").eq("board_id", boardId).eq("archived", false).order("position"),
@@ -95,7 +106,7 @@ export const boardQuery = (boardId: string) =>
       }
       const cardRows = [...check(cards), ...mirroredCards].sort((a, b) => a.position - b.position);
       const boardRow = check(board);
-      const coverUrls = await signCovers([...cardRows.map((c) => c.cover_url ?? ""), boardRow.background_image ?? ""]);
+      const coverUrls = await signCovers([...cardRows.map((c) => c.cover_url ?? ""), boardRow.background_image ?? ""], client);
       return {
         coverUrls,
         board: boardRow,
@@ -111,7 +122,7 @@ export const boardQuery = (boardId: string) =>
 export const cardQuery = (cardId: string) =>
   queryOptions({
     queryKey: ["card", cardId],
-    queryFn: async () => {
+    queryFn: async ({ client }) => {
       const mirrorRes = await supabase.from("card_mirrors").select("*").eq("id", cardId).maybeSingle();
       if (mirrorRes.error) throw mirrorRes.error;
       const mirror = mirrorRes.data;
@@ -124,7 +135,7 @@ export const cardQuery = (cardId: string) =>
         supabase.from("card_activity").select("*").eq("card_id", sourceId).order("created_at", { ascending: false }).limit(20),
       ]);
       const c = check(card);
-      const covers = c.cover_url ? await signCovers([c.cover_url]) : {};
+      const covers = c.cover_url ? await signCovers([c.cover_url], client) : {};
       return {
         coverSignedUrl: c.cover_url ? covers[c.cover_url] ?? null : null,
         card: c,
