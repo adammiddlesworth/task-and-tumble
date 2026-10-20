@@ -27,7 +27,7 @@ export function CardFaceView({ card, labels, checklist, goalCount, coverUrl, onT
       {labels.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {labels.map((l) => (
-            <span key={l.id} data-label={l.color} title={l.name} className="h-2 w-9 rounded-full" />
+            <span key={l.id} data-label={l.color} style={labelStyle(l.color)} title={l.name} className="h-2 w-9 rounded-full" />
           ))}
         </div>
       )}

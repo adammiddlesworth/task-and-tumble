@@ -17,6 +17,9 @@ export const isCustomColor = (bg?: string | null): bg is string => !!bg && /^#[0
 export const boardBgStyle = (bg?: string | null): { backgroundColor?: string } =>
   isCustomColor(bg) ? { backgroundColor: bg } : {};
 export const LABEL_COLORS = ["green", "yellow", "orange", "red", "purple", "blue", "sky", "lime", "pink", "teal", "black"] as const;
+/** Labels use a named preset (styled via CSS) or a custom "#rrggbb" color. */
+export const labelStyle = (color?: string | null): { backgroundColor?: string } =>
+  isCustomColor(color) ? { backgroundColor: color } : {};
 export const DAY_LISTS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekend"];
 
 function check<T>(res: { data: T; error: { message: string } | null }): NonNullable<T> {

@@ -85,6 +85,13 @@
       "when": 1792504939277,
       "tag": "0011_more_label_colors",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792505034052,
+      "tag": "0012_custom_label_colors",
+      "breakpoints": true
     }
   ]
 }
