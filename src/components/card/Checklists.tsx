@@ -50,6 +50,16 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
     refresh();
   }
 
+  async function saveTitle() {
+    const next = title.trim();
+    if (!next || next === cl.title) {
+      setTitle(cl.title);
+      return;
+    }
+    await supabase.from("checklists").update({ title: next }).eq("id", cl.id);
+    refresh();
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
@@ -57,8 +67,13 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onBlur={async () => { await supabase.from("checklists").update({ title }).eq("id", cl.id); refresh(); }}
-          className="flex-1 bg-transparent text-sm font-semibold outline-none"
+          onBlur={saveTitle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+            if (e.key === "Escape") { setTitle(cl.title); (e.target as HTMLInputElement).blur(); }
+          }}
+          aria-label="Checklist title"
+          className="flex-1 rounded bg-transparent px-1 text-sm font-semibold outline-none hover:bg-muted/60 focus:bg-muted/60"
         />
         <button onClick={async () => { await supabase.from("checklists").delete().eq("id", cl.id); refresh(); }} className="text-muted-foreground hover:text-destructive" aria-label="Delete checklist">
           <Trash2 className="h-4 w-4" />
@@ -69,21 +84,63 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
         <Progress value={total ? (done / total) * 100 : 0} className="h-1.5" />
       </div>
       {cl.checklist_items.map((it) => (
-        <div key={it.id} className="group flex items-center gap-2 pl-1">
-          <Checkbox
-            checked={it.is_done}
-            onCheckedChange={async (v) => { await supabase.from("checklist_items").update({ is_done: !!v }).eq("id", it.id); refresh(); }}
-          />
-          <span className={`flex-1 text-sm ${it.is_done ? "text-muted-foreground line-through" : ""}`}>{it.text}</span>
-          <button onClick={async () => { await supabase.from("checklist_items").delete().eq("id", it.id); refresh(); }} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive" aria-label="Delete item">
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        <ChecklistItemRow key={it.id} item={it} refresh={refresh} />
       ))}
       <div className="flex gap-2 pl-1">
         <Input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addItem()} placeholder="Add an item" className="h-8 text-sm" />
         <Button size="sm" variant="ghost" onClick={addItem}><Plus className="h-4 w-4" /></Button>
       </div>
+    </div>
+  );
+}
+
+function ChecklistItemRow({ item, refresh }: { item: Tables<"checklist_items">; refresh: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(item.text);
+
+  async function save() {
+    const next = text.trim();
+    setEditing(false);
+    if (!next || next === item.text) {
+      setText(item.text);
+      return;
+    }
+    await supabase.from("checklist_items").update({ text: next }).eq("id", item.id);
+    refresh();
+  }
+
+  return (
+    <div className="group flex items-center gap-2 pl-1">
+      <Checkbox
+        checked={item.is_done}
+        onCheckedChange={async (v) => { await supabase.from("checklist_items").update({ is_done: !!v }).eq("id", item.id); refresh(); }}
+      />
+      {editing ? (
+        <input
+          autoFocus
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onBlur={save}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") save();
+            if (e.key === "Escape") { setText(item.text); setEditing(false); }
+          }}
+          aria-label="Edit item"
+          className="flex-1 rounded bg-muted/60 px-1 text-sm outline-none"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => { setText(item.text); setEditing(true); }}
+          title="Click to edit"
+          className={`flex-1 rounded px-1 text-left text-sm hover:bg-muted/60 ${item.is_done ? "text-muted-foreground line-through" : ""}`}
+        >
+          {item.text}
+        </button>
+      )}
+      <button onClick={async () => { await supabase.from("checklist_items").delete().eq("id", item.id); refresh(); }} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive" aria-label="Delete item">
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }
