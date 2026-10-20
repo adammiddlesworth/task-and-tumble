@@ -50,6 +50,16 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
     refresh();
   }
 
+  async function saveTitle() {
+    const next = title.trim();
+    if (!next || next === cl.title) {
+      setTitle(cl.title);
+      return;
+    }
+    await supabase.from("checklists").update({ title: next }).eq("id", cl.id);
+    refresh();
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
@@ -57,8 +67,13 @@ function ChecklistBlock({ cl, refresh }: { cl: CL; refresh: () => void }) {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onBlur={async () => { await supabase.from("checklists").update({ title }).eq("id", cl.id); refresh(); }}
-          className="flex-1 bg-transparent text-sm font-semibold outline-none"
+          onBlur={saveTitle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+            if (e.key === "Escape") { setTitle(cl.title); (e.target as HTMLInputElement).blur(); }
+          }}
+          aria-label="Checklist title"
+          className="flex-1 rounded bg-transparent px-1 text-sm font-semibold outline-none hover:bg-muted/60 focus:bg-muted/60"
         />
         <button onClick={async () => { await supabase.from("checklists").delete().eq("id", cl.id); refresh(); }} className="text-muted-foreground hover:text-destructive" aria-label="Delete checklist">
           <Trash2 className="h-4 w-4" />
