@@ -16,7 +16,7 @@ export const BOARD_COLORS = ["forest", "crimson", "teal", "ocean", "amber", "plu
 export const isCustomColor = (bg?: string | null): bg is string => !!bg && /^#[0-9a-f]{6}$/i.test(bg);
 export const boardBgStyle = (bg?: string | null): { backgroundColor?: string } =>
   isCustomColor(bg) ? { backgroundColor: bg } : {};
-export const LABEL_COLORS = ["green", "yellow", "orange", "red", "purple", "blue"] as const;
+export const LABEL_COLORS = ["green", "yellow", "orange", "red", "purple", "blue", "sky", "lime", "pink", "teal", "black"] as const;
 export const DAY_LISTS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekend"];
 
 function check<T>(res: { data: T; error: { message: string } | null }): NonNullable<T> {
