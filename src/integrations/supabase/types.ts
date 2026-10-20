@@ -319,6 +319,7 @@ export type Database = {
         Row: {
           archived: boolean
           board_id: string
+          collapsed: boolean
           created_at: string
           id: string
           position: number
@@ -327,6 +328,7 @@ export type Database = {
         Insert: {
           archived?: boolean
           board_id: string
+          collapsed?: boolean
           created_at?: string
           id?: string
           position?: number
@@ -335,6 +337,7 @@ export type Database = {
         Update: {
           archived?: boolean
           board_id?: string
+          collapsed?: boolean
           created_at?: string
           id?: string
           position?: number

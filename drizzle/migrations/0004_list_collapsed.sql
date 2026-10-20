@@ -1,0 +1,1 @@
+ALTER TABLE public.lists ADD COLUMN IF NOT EXISTS collapsed boolean NOT NULL DEFAULT false;
