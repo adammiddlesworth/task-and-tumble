@@ -15,7 +15,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { Archive, Plus, RotateCcw, Star } from "lucide-react";
+import { Archive, CalendarDays, Columns3, Plus, RotateCcw, Star } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { boardBgStyle, boardQuery, type BoardData, type Card, type List } from "@/lib/data";
@@ -25,6 +25,9 @@ import { BackgroundPicker } from "@/components/board/BackgroundPicker";
 import { DeleteBoardButton } from "@/components/board/DeleteBoardButton";
 import { BoardMembers } from "@/components/card/Members";
 import { CardFaceView } from "@/components/board/CardFace";
+import { BoardCalendar } from "@/components/board/BoardCalendar";
+import { BoardLabelFilter } from "@/components/board/BoardLabelFilter";
+import { matchesLabels } from "@/lib/board-calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -77,6 +80,9 @@ function BoardPage() {
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [title, setTitle] = useState(data.board.title);
   const [newList, setNewList] = useState<string | null>(null);
+  const [view, setView] = useState<"board" | "calendar">("board");
+  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+  useEffect(() => { setView("board"); setSelectedLabels([]); }, [boardId]);
 
   useEffect(() => {
     if (activeId) return;
@@ -242,6 +248,11 @@ function BoardPage() {
   }
 
   const isPower = data.board.board_type === "power_list";
+  const isYoutube = data.board.board_type === "youtube";
+  const visibleCards = data.cards.filter((card) => matchesLabels(
+    data.cardLabels.filter((row) => row.card_id === card.id).map((row) => row.label_id), selectedLabels,
+  ));
+  const visibleIds = new Set(visibleCards.map((card) => card.id));
   const bgUrl = data.board.background_image ? data.coverUrls[data.board.background_image] : undefined;
   const activeCard = activeId && !activeId.startsWith("list:") ? cardById.get(activeId) : null;
 
@@ -264,6 +275,13 @@ function BoardPage() {
           <Star className={`h-4 w-4 ${data.board.is_starred ? "fill-current" : ""}`} />
         </button>
         <div className="ml-auto flex flex-wrap gap-2">
+          {isYoutube && <>
+            <div className="flex gap-1" role="group" aria-label="Board view">
+              <Button size="sm" variant={view === "board" ? "secondary" : "ghost"} className={view === "board" ? "" : "board-ghost"} aria-pressed={view === "board"} onClick={() => setView("board")}><Columns3 /> Board</Button>
+              <Button size="sm" variant={view === "calendar" ? "secondary" : "ghost"} className={view === "calendar" ? "" : "board-ghost"} aria-pressed={view === "calendar"} onClick={() => setView("calendar")}><CalendarDays /> Calendar</Button>
+            </div>
+            <BoardLabelFilter labels={data.labels} selected={selectedLabels} onChange={setSelectedLabels} />
+          </>}
           <BackgroundPicker board={data.board} />
           <BoardMembers boardId={boardId} ownerId={data.board.owner_id} />
         {isPower && (
@@ -280,13 +298,13 @@ function BoardPage() {
         </div>
       </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
+      {isYoutube && view === "calendar" ? <BoardCalendar key={boardId} data={data} cards={visibleCards} /> : <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
         <div className="flex min-h-0 flex-1 snap-x snap-mandatory items-start gap-3 overflow-x-auto px-4 pb-4 sm:snap-none">
           <SortableContext items={listOrder.map((id) => `list:${id}`)} strategy={horizontalListSortingStrategy}>
             {listOrder.map((id) => {
               const list = listById.get(id);
               if (!list) return null;
-              const cards = (columns[id] ?? []).map((cid) => cardById.get(cid)).filter(Boolean) as Card[];
+              const cards = (columns[id] ?? []).filter((cid) => !isYoutube || visibleIds.has(cid)).map((cid) => cardById.get(cid)).filter(Boolean) as Card[];
               return (
                 <ListColumn
                   key={id}
@@ -325,7 +343,7 @@ function BoardPage() {
             </div>
           )}
         </DragOverlay>
-      </DndContext>
+      </DndContext>}
 
       <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
         <AlertDialogContent>
