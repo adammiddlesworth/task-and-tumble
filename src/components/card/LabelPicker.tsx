@@ -6,6 +6,7 @@ import { LABEL_COLORS, type Label } from "@/lib/data";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export function LabelPicker({ cardId, boardId, labels, selected, inline = false }: { cardId: string; boardId: string; labels: Label[]; selected: string[]; inline?: boolean }) {
   const qc = useQueryClient();
@@ -17,15 +18,15 @@ export function LabelPicker({ cardId, boardId, labels, selected, inline = false 
   };
 
   async function toggle(id: string) {
-    if (selected.includes(id)) await supabase.from("card_labels").delete().eq("card_id", cardId).eq("label_id", id);
-    else await supabase.from("card_labels").insert({ card_id: cardId, label_id: id });
+    const { error } = selected.includes(id) ? await supabase.from("card_labels").delete().eq("card_id", cardId).eq("label_id", id) : await supabase.from("card_labels").insert({ card_id: cardId, label_id: id });
+    if (error) toast.error(error.message);
     refresh();
   }
 
   async function saveLabel() {
     if (!edit) return;
-    if (edit.id) await supabase.from("labels").update({ name: edit.name ?? "", color: edit.color ?? "green" }).eq("id", edit.id);
-    else await supabase.from("labels").insert({ board_id: boardId, name: edit.name ?? "", color: edit.color ?? "green" });
+    const { error } = edit.id ? await supabase.from("labels").update({ name: edit.name ?? "", color: edit.color ?? "green" }).eq("id", edit.id) : await supabase.rpc("add_card_label", { _card_id: cardId, _name: edit.name ?? "", _color: edit.color ?? "green" });
+    if (error) { toast.error(error.message); return; }
     setEdit(null);
     refresh();
   }
