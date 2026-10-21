@@ -21,6 +21,8 @@ import { CoverBanner, CoverButton } from "@/components/card/CoverImage";
 import { CardMembers } from "@/components/card/Members";
 import { archivePlacement } from "@/lib/card-actions";
 import { CardComments } from "@/components/card/CardComments";
+import { ReviewForm } from "@/components/card/ReviewForm";
+import { reviewForCardQuery } from "@/lib/reviews";
 
 export const Route = createFileRoute("/_authenticated/board/$boardId/card/$cardId")({
   head: () => ({
@@ -43,6 +45,7 @@ function CardModal() {
   const qc = useQueryClient();
   const { data: board } = useQuery(boardQuery(boardId));
   const { data } = useQuery(cardQuery(cardId));
+  const { data: review } = useQuery(reviewForCardQuery(data?.card.id ?? cardId));
   const [title, setTitle] = useState("");
   useEffect(() => setTitle(data?.card.title ?? ""), [data?.card.title]);
 
@@ -125,6 +128,12 @@ function CardModal() {
             <div className="ml-8 rounded-lg bg-muted/60 p-3 text-sm">
               <div className="mb-1 flex items-center gap-2 font-semibold"><Target className="h-4 w-4" /> {linked.length} linked task{linked.length === 1 ? "" : "s"}</div>
               {linked.map((c) => <div key={c.id} className={c.is_complete ? "text-muted-foreground line-through" : ""}>• {c.title}</div>)}
+            </div>
+          )}
+
+          {review && (
+            <div className="ml-8">
+              <ReviewForm review={review} onSubmitted={() => { if (!card.is_complete) { save({ is_complete: true }); logActivity(card.id, "submitted review"); } }} />
             </div>
           )}
 

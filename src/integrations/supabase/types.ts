@@ -592,6 +592,57 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          answers: Json
+          card_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          review_date: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          card_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          review_date: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          answers?: Json
+          card_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          review_date?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "claude_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       youtube_details: {
         Row: {
           card_id: string
@@ -751,6 +802,10 @@ export type Database = {
           is_assigned: boolean
           user_id: string
         }[]
+      }
+      ensure_review_cards: {
+        Args: { _board_id: string; _due: string; _today: string }
+        Returns: number
       }
       owns_board: { Args: { _board_id: string }; Returns: boolean }
       seed_default_boards: { Args: never; Returns: undefined }
