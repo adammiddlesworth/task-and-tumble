@@ -72,7 +72,7 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
       style={{ transform: CSS.Transform.toString(transform), transition, ...(list.color ? { backgroundColor: list.color } : {}) }}
       className={`flex max-h-full w-[272px] shrink-0 snap-start flex-col rounded-xl bg-panel text-panel-foreground shadow-card ${isDragging ? "opacity-50" : ""}`}
     >
-      <div className="flex items-center gap-1 px-2 pt-2" {...attributes} {...listeners}>
+      <div className="flex items-center gap-1 px-2 pt-2" style={list.color ? { color: "oklch(0.99 0 0)" } : undefined} {...attributes} {...listeners}>
         {editing ? (
           <input
             autoFocus
