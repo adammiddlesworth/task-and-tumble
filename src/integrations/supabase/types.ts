@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      board_automations: {
+        Row: {
+          actions: Json
+          board_id: string
+          created_at: string
+          created_by: string
+          enabled: boolean
+          id: string
+          trigger_list_id: string | null
+          trigger_type: string
+        }
+        Insert: {
+          actions?: Json
+          board_id: string
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          id?: string
+          trigger_list_id?: string | null
+          trigger_type: string
+        }
+        Update: {
+          actions?: Json
+          board_id?: string
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          id?: string
+          trigger_list_id?: string | null
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_automations_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_automations_trigger_list_id_fkey"
+            columns: ["trigger_list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       board_invites: {
         Row: {
           accepted_at: string | null

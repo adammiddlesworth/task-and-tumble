@@ -127,6 +127,13 @@
       "when": 1792587281014,
       "tag": "0017_user_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792587634306,
+      "tag": "0018_board_automations",
+      "breakpoints": true
     }
   ]
 }
