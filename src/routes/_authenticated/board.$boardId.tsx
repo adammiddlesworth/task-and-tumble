@@ -299,7 +299,7 @@ function BoardPage() {
             </div>
             <BoardLabelFilter labels={data.labels} selected={selectedLabels} onChange={setSelectedLabels} />
           </>}
-          <RulesDialog />
+          <RulesDialog boardId={boardId} />
           <BackgroundPicker board={data.board} />
           <BoardMembers boardId={boardId} ownerId={data.board.owner_id} />
         {isPower && (

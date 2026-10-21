@@ -25,3 +25,4 @@
 - Starter-board regression tests execute the applied SQL in isolated PGlite databases, so onboarding rules are verified without creating real accounts or touching existing user data.
 - Daily/weekly review cards are created idempotently by the `ensure_review_cards` RPC (client passes local date + local deadline), keyed by a unique (user, kind, date) row in `reviews`, so repeated board loads never duplicate cards.
 - Personal automation rules live in one user_rules row per user; ensure_review_cards reads the toggles server-side so disabled reviews are never created.
+- Board automations (Trello Butler-style) are rows in board_automations run by an AFTER trigger on cards as the acting user; a transaction-local flag stops automations from re-triggering themselves, and failing actions are skipped so they never block the user's own change.

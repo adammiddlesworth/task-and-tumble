@@ -19,3 +19,4 @@
 
 # Rules
 - [x] Rules button (review toggles + due time)
+- [x] Board automations: card added to board/list → checklist, move, copy, due date, label, complete
