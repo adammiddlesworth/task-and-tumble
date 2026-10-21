@@ -15,4 +15,7 @@
 
 # YouTube calendar
 - [x] Calendar view using canonical target publish dates and undated cards; signed-in save, day placement, card opening and month navigation verified.
-- [x] Label filters for YouTube board and calendar views; signed-in filtering verified and all 43 regression tests pass.- [x] Rules button (review toggles + due time)
+- [x] Label filters for YouTube board and calendar views; signed-in filtering verified and all 43 regression tests pass.
+
+# Rules
+- [x] Rules button (review toggles + due time)
