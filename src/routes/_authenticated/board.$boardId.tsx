@@ -19,6 +19,7 @@ import { Archive, CalendarDays, Columns3, Plus, RotateCcw, Star } from "lucide-r
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { boardBgStyle, boardQuery, type BoardData, type Card, type List } from "@/lib/data";
+import { ensureReviewCards } from "@/lib/reviews";
 import { positionBetween } from "@/lib/position";
 import { ListColumn } from "@/components/board/ListColumn";
 import { BackgroundPicker } from "@/components/board/BackgroundPicker";
@@ -90,6 +91,13 @@ function BoardPage() {
     setColumns(buildColumns(data));
   }, [data, activeId]);
   useEffect(() => setTitle(data.board.title), [data.board.title]);
+  const boardType = data.board.board_type;
+  useEffect(() => {
+    if (boardType !== "power_list") return;
+    ensureReviewCards(boardId)
+      .then((n) => { if (n > 0) qc.invalidateQueries({ queryKey: ["board", boardId] }); })
+      .catch(() => {});
+  }, [boardId, boardType, qc]);
 
   const cardById = useMemo(() => new Map(data.cards.map((c) => [c.id, c])), [data.cards]);
   const listById = useMemo(() => new Map(data.lists.map((l) => [l.id, l])), [data.lists]);
