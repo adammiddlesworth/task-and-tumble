@@ -194,6 +194,12 @@ function BoardPage() {
     await supabase.from("lists").update({ collapsed: v }).eq("id", list.id);
   }
 
+  async function setListColor(list: List, color: string | null) {
+    qc.setQueryData<BoardData>(key, (d) => (d ? { ...d, lists: d.lists.map((l) => (l.id === list.id ? { ...l, color } : l)) } : d));
+    const { error } = await supabase.from("lists").update({ color }).eq("id", list.id);
+    if (error) toast.error(error.message);
+  }
+
   async function archiveList(list: List) {
     qc.setQueryData<BoardData>(key, (d) => (d ? { ...d, lists: d.lists.filter((l) => l.id !== list.id) } : d));
     await supabase.from("lists").update({ archived: true }).eq("id", list.id);
@@ -315,6 +321,7 @@ function BoardPage() {
                   onRename={(t) => renameList(list, t)}
                   onArchive={() => archiveList(list)}
                   onToggleCollapse={() => toggleCollapse(list)}
+                  onColor={(c) => setListColor(list, c)}
                   onAddCard={(t) => addCard(list, t)}
                 />
               );

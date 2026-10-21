@@ -535,6 +535,7 @@ export type Database = {
           archived: boolean
           board_id: string
           collapsed: boolean
+          color: string | null
           created_at: string
           id: string
           position: number
@@ -544,6 +545,7 @@ export type Database = {
           archived?: boolean
           board_id: string
           collapsed?: boolean
+          color?: string | null
           created_at?: string
           id?: string
           position?: number
@@ -553,6 +555,7 @@ export type Database = {
           archived?: boolean
           board_id?: string
           collapsed?: boolean
+          color?: string | null
           created_at?: string
           id?: string
           position?: number
