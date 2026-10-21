@@ -643,6 +643,30 @@ export type Database = {
           },
         ]
       }
+      user_rules: {
+        Row: {
+          daily_review: boolean
+          review_due_time: string
+          updated_at: string
+          user_id: string
+          weekly_review: boolean
+        }
+        Insert: {
+          daily_review?: boolean
+          review_due_time?: string
+          updated_at?: string
+          user_id?: string
+          weekly_review?: boolean
+        }
+        Update: {
+          daily_review?: boolean
+          review_due_time?: string
+          updated_at?: string
+          user_id?: string
+          weekly_review?: boolean
+        }
+        Relationships: []
+      }
       youtube_details: {
         Row: {
           card_id: string
