@@ -1,0 +1,1 @@
+ALTER TABLE public.lists ADD COLUMN IF NOT EXISTS color text CHECK (color IS NULL OR color ~ '^#[0-9a-fA-F]{6}$');
