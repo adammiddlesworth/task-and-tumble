@@ -24,3 +24,4 @@
 - Comments reference canonical card IDs and use database-assigned authors with author-only edit/delete policies, so mirrors share discussions without permitting impersonation.
 - Starter-board regression tests execute the applied SQL in isolated PGlite databases, so onboarding rules are verified without creating real accounts or touching existing user data.
 - Daily/weekly review cards are created idempotently by the `ensure_review_cards` RPC (client passes local date + local deadline), keyed by a unique (user, kind, date) row in `reviews`, so repeated board loads never duplicate cards.
+- Personal automation rules live in one user_rules row per user; ensure_review_cards reads the toggles server-side so disabled reviews are never created.

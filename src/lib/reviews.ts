@@ -40,16 +40,39 @@ export const WEEKLY_QUESTIONS: Question[] = [
   ...LIFE.map((l): Question => ({ key: `life_${l.toLowerCase().replace(/[^a-z]+/g, "_")}`, label: l, type: "rating", max: 10 })),
 ];
 
-/** Local calendar date (YYYY-MM-DD) and today's 5 PM local deadline as ISO. */
-export function reviewTargets(now = new Date()) {
+/** Local calendar date (YYYY-MM-DD) and today's local deadline ("HH:MM", default 5 PM) as ISO. */
+export function reviewTargets(now = new Date(), dueTime = "17:00") {
   const pad = (n: number) => String(n).padStart(2, "0");
   const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  const due = new Date(now.getFullYear(), now.getMonth(), now.getDate(), REVIEW_DUE_HOUR, 0, 0, 0);
+  const m = /^(\d{2}):(\d{2})$/.exec(dueTime);
+  const h = m ? Number(m[1]) : REVIEW_DUE_HOUR;
+  const min = m ? Number(m[2]) : 0;
+  const due = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, min, 0, 0);
   return { today, due: due.toISOString() };
 }
 
-export async function ensureReviewCards(boardId: string) {
-  const { today, due } = reviewTargets();
+export type UserRules = { daily_review: boolean; weekly_review: boolean; review_due_time: string };
+export const DEFAULT_RULES: UserRules = { daily_review: true, weekly_review: true, review_due_time: "17:00" };
+
+export const userRulesQuery = () =>
+  queryOptions({
+    queryKey: ["user-rules"],
+    queryFn: async (): Promise<UserRules> => {
+      const { data, error } = await supabase.from("user_rules").select("daily_review, weekly_review, review_due_time").maybeSingle();
+      if (error) throw error;
+      return data ?? DEFAULT_RULES;
+    },
+  });
+
+export async function saveUserRules(rules: UserRules) {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) throw new Error("Not signed in");
+  const { error } = await supabase.from("user_rules").upsert({ user_id: u.user.id, ...rules });
+  if (error) throw error;
+}
+
+export async function ensureReviewCards(boardId: string, dueTime = "17:00") {
+  const { today, due } = reviewTargets(new Date(), dueTime);
   const { data, error } = await supabase.rpc("ensure_review_cards", { _board_id: boardId, _today: today, _due: due });
   if (error) throw error;
   return data ?? 0;

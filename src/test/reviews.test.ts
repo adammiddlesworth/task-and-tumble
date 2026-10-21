@@ -16,3 +16,14 @@ describe("review cards", () => {
     expect(WEEKLY_QUESTIONS.filter((q) => q.type === "rating" && q.max === 10)).toHaveLength(10);
   });
 });
+
+import { reviewTargets as rt2 } from "@/lib/reviews";
+describe("review due time rule", () => {
+  it("uses the chosen due time", () => {
+    const d = new Date(rt2(new Date(2026, 9, 21, 9), "18:30").due);
+    expect([d.getHours(), d.getMinutes()]).toEqual([18, 30]);
+  });
+  it("defaults to 5 PM", () => {
+    expect(new Date(rt2(new Date(2026, 9, 21, 9)).due).getHours()).toBe(17);
+  });
+});

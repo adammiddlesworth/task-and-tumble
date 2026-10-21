@@ -120,6 +120,13 @@
       "when": 1792586311883,
       "tag": "0016_daily_weekly_reviews",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792587281014,
+      "tag": "0017_user_rules",
+      "breakpoints": true
     }
   ]
 }
