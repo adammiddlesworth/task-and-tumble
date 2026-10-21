@@ -1,10 +1,10 @@
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
-import { ChevronsLeftRight, ChevronsRightLeft, MoreHorizontal, Plus, X } from "lucide-react";
+import { ChevronsLeftRight, ChevronsRightLeft, MoreHorizontal, PenLine, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SortableCard } from "./CardFace";
 import type { BoardData, Card, List } from "@/lib/data";
 
@@ -17,9 +17,12 @@ type Props = {
   onArchive: () => void;
   onAddCard: (title: string) => void;
   onToggleCollapse: () => void;
+  onColor: (color: string | null) => void;
 };
 
-export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive, onAddCard, onToggleCollapse }: Props) {
+const LIST_COLORS = ["#1f8a4c", "#1d6fb8", "#0e8f8a", "#6b4fbb", "#c43d6b", "#c0392b", "#b7950b", "#4a5568"];
+
+export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive, onAddCard, onToggleCollapse, onColor }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `list:${list.id}`,
     data: { type: "list" },
@@ -49,7 +52,7 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
     return (
       <div
         ref={setNodeRef}
-        style={{ transform: CSS.Transform.toString(transform), transition }}
+        style={{ transform: CSS.Transform.toString(transform), transition, ...(list.color ? { backgroundColor: list.color, color: "oklch(0.99 0 0)" } : {}) }}
         {...attributes}
         {...listeners}
         onClick={onToggleCollapse}
@@ -66,7 +69,7 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
   return (
     <div
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
+      style={{ transform: CSS.Transform.toString(transform), transition, ...(list.color ? { backgroundColor: list.color } : {}) }}
       className={`flex max-h-full w-[272px] shrink-0 snap-start flex-col rounded-xl bg-panel text-panel-foreground shadow-card ${isDragging ? "opacity-50" : ""}`}
     >
       <div className="flex items-center gap-1 px-2 pt-2" {...attributes} {...listeners}>
@@ -101,6 +104,19 @@ export function ListColumn({ list, cards, data, goalCounts, onRename, onArchive,
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => setEditing(true)}>Rename list</DropdownMenuItem>
             <DropdownMenuItem onClick={onToggleCollapse}>Collapse list</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs">List color</DropdownMenuLabel>
+            <div className="grid grid-cols-5 gap-1.5 px-2 pb-2">
+              {LIST_COLORS.map((c) => (
+                <button key={c} type="button" aria-label={`Color ${c}`} onClick={() => onColor(c)} style={{ backgroundColor: c }} className={`h-6 rounded ${list.color === c ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`} />
+              ))}
+              <label title="Custom color" className="relative flex h-6 cursor-pointer items-center justify-center rounded border border-dashed border-border text-muted-foreground">
+                <PenLine className="h-3.5 w-3.5" />
+                <input type="color" aria-label="Custom list color" value={list.color ?? "#00c864"} onChange={(e) => onColor(e.target.value)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+              </label>
+              <button type="button" onClick={() => onColor(null)} className="col-span-4 h-6 rounded border border-border text-xs text-muted-foreground hover:bg-muted">Default</button>
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onArchive}>Archive list</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
