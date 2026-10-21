@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AutomationsPanel } from "@/components/board/AutomationsPanel";
 import { DEFAULT_RULES, saveUserRules, userRulesQuery, type UserRules } from "@/lib/reviews";
 
-export function RulesDialog({ onSaved }: { onSaved?: () => void }) {
+export function RulesDialog({ boardId, onSaved }: { boardId: string; onSaved?: () => void }) {
   const qc = useQueryClient();
   const { data } = useQuery(userRulesQuery());
   const [open, setOpen] = useState(false);
@@ -37,11 +39,18 @@ export function RulesDialog({ onSaved }: { onSaved?: () => void }) {
           <Wand2 className="h-4 w-4" /> Rules
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Your rules</DialogTitle>
-          <DialogDescription>Personal automations. They only affect your account.</DialogDescription>
+          <DialogTitle>Rules</DialogTitle>
+          <DialogDescription>Automate this board, or set your personal review rules.</DialogDescription>
         </DialogHeader>
+        <Tabs defaultValue="board">
+          <TabsList>
+            <TabsTrigger value="board">Board automations</TabsTrigger>
+            <TabsTrigger value="personal">My reviews</TabsTrigger>
+          </TabsList>
+          <TabsContent value="board"><AutomationsPanel boardId={boardId} /></TabsContent>
+          <TabsContent value="personal">
         <div className="space-y-4">
           <label className="flex items-center justify-between gap-4">
             <span><span className="block text-sm font-medium">Daily Review card</span><span className="text-xs text-muted-foreground">Added to today's list on your Power List</span></span>
@@ -60,6 +69,8 @@ export function RulesDialog({ onSaved }: { onSaved?: () => void }) {
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
           <Button onClick={save} disabled={busy}>Save rules</Button>
         </div>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
